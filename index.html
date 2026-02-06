@@ -28,7 +28,7 @@
 
         #guidance-popup {
             pointer-events: none;
-            transition: opacity 0.2s ease-in-out, transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+            transition: opacity 0.15s ease-in-out, transform 0.15s cubic-bezier(0.16, 1, 0.3, 1);
             z-index: 5000;
             transform: translateY(10px);
         }
@@ -53,7 +53,7 @@
 
     <!-- PRINT PREVIEW MODAL -->
     <div id="print-modal" class="hidden fixed inset-0 z-[2000] flex items-center justify-center p-4 md:p-12 modal-overlay no-print">
-        <div class="bg-slate-50 w-full max-w-5xl h-full rounded-[40px] shadow-2xl overflow-hidden flex flex-col animate-in zoom-in-95 duration-300">
+        <div class="bg-white w-full max-w-5xl h-full rounded-[40px] shadow-2xl overflow-hidden flex flex-col animate-in zoom-in-95 duration-300">
             <div class="p-6 border-b border-slate-200 flex justify-between items-center bg-white">
                 <div class="flex items-center gap-3">
                     <div class="p-2 bg-blue-600 rounded-lg text-white"><i data-lucide="file-text" class="w-5 h-5"></i></div>
@@ -90,7 +90,15 @@
                         <div id="prev-audit-list" class="space-y-2"></div>
                     </div>
 
-                    <div class="pt-24 grid grid-cols-2 gap-16">
+                    <!-- REVIEWER REMARKS SECTION IN PRINT -->
+                    <div class="space-y-4 pt-4">
+                        <h3 class="text-xs font-black border-l-4 border-blue-600 pl-3">Reviewer Remarks</h3>
+                        <div class="min-h-[80px] p-4 bg-slate-50 border border-slate-200 rounded-xl">
+                            <p id="prev-comments" class="text-[10px] normal-case leading-relaxed italic text-slate-700"></p>
+                        </div>
+                    </div>
+
+                    <div class="pt-16 grid grid-cols-2 gap-16">
                         <div class="space-y-12">
                             <div class="border-b-2 border-slate-900 pb-2">
                                 <p class="text-[10px] font-bold text-slate-400">Reviewer Name/Rank</p>
@@ -137,8 +145,11 @@
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch no-print">
+            
+            <!-- MAIN FORM AREA -->
             <div class="lg:col-span-8 bg-white rounded-[40px] shadow-sm border border-slate-200 flex flex-col overflow-hidden relative">
-                <div class="flex-1 p-8 md:p-12">
+                <div class="flex-1 p-6 md:p-10">
+                    
                     <!-- STEP 1: IDENTITY -->
                     <div id="step-1" class="snco-step space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
                         <div class="border-b border-slate-100 pb-4">
@@ -177,27 +188,13 @@
                                 <div id="component-toggle" class="flex bg-slate-100 rounded-xl p-1 gap-1"></div>
                             </div>
                         </div>
-                        <div id="step1-extra" class="hidden p-6 bg-purple-50 rounded-3xl border border-purple-100 space-y-4">
-                            <h3 class="text-xs font-black uppercase text-purple-800 tracking-widest flex items-center gap-2"><i data-lucide="star" class="w-4 h-4"></i> STEP Program Controls</h3>
-                            <div class="grid grid-cols-2 gap-4">
-                                <div class="flex items-center justify-between p-3 bg-white rounded-xl border border-purple-200 cursor-pointer" onclick="sncoToggleStepFlag('isSoleOccupant')">
-                                    <span class="text-[10px] font-bold text-slate-700">Sole Occupant?</span>
-                                    <input type="checkbox" id="flag-sole" class="w-5 h-5 rounded text-purple-600 pointer-events-none">
-                                </div>
-                                <div class="flex items-center justify-between p-3 bg-white rounded-xl border border-purple-200 cursor-pointer" onclick="sncoToggleStepFlag('priorStepToGrade')">
-                                    <span class="text-[10px] font-bold text-slate-700">Prior STEP?</span>
-                                    <input type="checkbox" id="flag-prior" class="w-5 h-5 rounded text-purple-600 pointer-events-none">
-                                </div>
-                            </div>
-                            <textarea id="prof-fmp" oninput="sncoUpdateField('stepFlags', 'fmpRemarks', this.value)" class="guidance-trigger w-full bg-white border border-purple-200 rounded-xl p-3 text-xs min-h-[80px] outline-none" placeholder="Force Management Plan remarks..."></textarea>
-                        </div>
                     </div>
 
-                    <!-- STEP 2: SERVICE -->
+                    <!-- STEP 2: SERVICE & PROFESSIONAL DEVELOPMENT -->
                     <div id="step-2" class="snco-step hidden space-y-6 animate-in fade-in slide-in-from-right-4 duration-500">
                         <div class="border-b border-slate-100 pb-4">
-                            <h2 class="text-2xl font-black tracking-tight uppercase tracking-tighter italic leading-none">2. Service Verification</h2>
-                            <p class="text-slate-500 text-sm">Table 10.1 Service and active duty (TAFMS) data.</p>
+                            <h2 class="text-2xl font-black tracking-tight uppercase tracking-tighter italic leading-none">2. Service & Prof. Development</h2>
+                            <p class="text-slate-500 text-sm">Table 10.1 Service and mandatory requirements.</p>
                         </div>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                             <div class="space-y-4">
@@ -212,6 +209,26 @@
                                 <div class="space-y-1">
                                     <label class="text-[10px] font-black text-blue-600 uppercase tracking-widest italic block mb-1">Latest EPB Closeout Date</label>
                                     <input type="date" id="service-epbDate" oninput="sncoUpdateField('service', 'epbDate', this.value)" class="guidance-trigger w-full bg-blue-50 border border-blue-100 rounded-2xl p-3 text-sm font-bold outline-none">
+                                </div>
+
+                                <div class="bg-slate-900 rounded-[32px] p-6 space-y-4 shadow-xl">
+                                    <h3 class="text-[10px] font-black text-blue-400 uppercase tracking-widest flex items-center gap-2">
+                                        <i data-lucide="graduation-cap" class="w-4 h-4"></i> Professional Development
+                                    </h3>
+                                    <div class="space-y-3">
+                                        <div id="row-ncoa" class="flex items-center justify-between p-3 bg-slate-800 rounded-xl border border-slate-700 cursor-pointer" onclick="sncoTogglePME('NCOA')">
+                                            <span class="text-[10px] font-bold text-slate-300">NCOA Complete?</span>
+                                            <input type="checkbox" id="flag-ncoa" class="w-4 h-4 rounded text-blue-500 pointer-events-none">
+                                        </div>
+                                        <div id="row-sncoa" class="flex items-center justify-between p-3 bg-slate-800 rounded-xl border border-slate-700 cursor-pointer" onclick="sncoTogglePME('SNCOA')">
+                                            <span class="text-[10px] font-bold text-slate-300">SNCOA Complete?</span>
+                                            <input type="checkbox" id="flag-sncoa" class="w-4 h-4 rounded text-blue-500 pointer-events-none">
+                                        </div>
+                                        <div id="row-degree" class="flex items-center justify-between p-3 bg-slate-800 rounded-xl border border-slate-700 cursor-pointer" onclick="sncoToggleDegree()">
+                                            <span class="text-[10px] font-bold text-slate-300">CCAF / Associate Degree?</span>
+                                            <input type="checkbox" id="flag-degree" class="w-4 h-4 rounded text-blue-500 pointer-events-none">
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                             <div class="space-y-4">
@@ -232,8 +249,8 @@
                                     </div>
                                 </div>
                                 <div class="p-4 bg-slate-50 rounded-3xl border border-slate-200 grid grid-cols-2 gap-4">
-                                    <div class="space-y-1"><label class="text-[9px] font-bold text-slate-500 uppercase">PAFSC</label><select onchange="sncoUpdateField('service', 'pafscLevel', this.value)" class="w-full bg-white border border-slate-200 rounded-xl p-2 text-xs font-black"><option value="3">3</option><option value="5">5</option><option value="7" selected>7</option><option value="9">9</option></select></div>
-                                    <div class="space-y-1"><label class="text-[9px] font-bold text-slate-500 uppercase">DAFSC</label><select onchange="sncoUpdateField('service', 'dafscLevel', this.value)" class="w-full bg-white border border-slate-200 rounded-xl p-2 text-xs font-black"><option value="1">1</option><option value="3">3</option><option value="5">5</option><option value="7" selected>7</option><option value="9">9</option></select></div>
+                                    <div class="space-y-1"><label class="text-[9px] font-bold text-slate-500 uppercase">PAFSC</label><select id="service-pafsc" onchange="sncoUpdateField('service', 'pafscLevel', this.value)" class="w-full bg-white border border-slate-200 rounded-xl p-2 text-xs font-black"><option value="3">3</option><option value="5">5</option><option value="7" selected>7</option><option value="9">9</option></select></div>
+                                    <div class="space-y-1"><label class="text-[9px] font-bold text-slate-500 uppercase">DAFSC</label><select id="service-dafsc" onchange="sncoUpdateField('service', 'dafscLevel', this.value)" class="w-full bg-white border border-slate-200 rounded-xl p-2 text-xs font-black"><option value="1">1</option><option value="3">3</option><option value="5">5</option><option value="7" selected>7</option><option value="9">9</option></select></div>
                                 </div>
                             </div>
                         </div>
@@ -263,43 +280,57 @@
                     </div>
 
                     <!-- STEP 4: VERIFICATION -->
-                    <div id="step-4" class="snco-step hidden space-y-6 animate-in fade-in slide-in-from-right-4 duration-500">
+                    <div id="step-4" class="snco-step hidden space-y-8 animate-in fade-in slide-in-from-right-4 duration-500">
                         <div class="border-b border-slate-100 pb-4">
                             <h2 class="text-2xl font-black tracking-tight uppercase tracking-tighter italic leading-none">4. Verification & Reviewer Profile</h2>
                         </div>
-                        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 bg-slate-50 p-8 rounded-[40px] border border-slate-200 shadow-inner">
-                            <!-- REVIEWER INPUT AREA -->
-                            <div class="lg:col-span-4 space-y-4">
-                                <h3 class="font-black text-xs uppercase text-blue-600 flex items-center gap-3"><i data-lucide="user-check" class="w-5 h-5"></i> Reviewer Info</h3>
-                                <div class="space-y-3">
-                                    <div>
-                                        <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-1">Full Name</label>
-                                        <input type="text" id="rev-name" oninput="sncoUpdateField('reviewer', 'name', this.value)" class="guidance-trigger w-full bg-white border border-slate-200 rounded-xl p-3 text-xs font-bold outline-none" placeholder="DOE, JOHN B">
+                        
+                        <div class="space-y-8">
+                            <!-- TOP: VERIFICATION CHECK -->
+                            <div class="bg-slate-50 p-8 rounded-[40px] border border-slate-200 shadow-inner space-y-6">
+                                <h3 class="font-black text-xs uppercase text-blue-600 flex items-center gap-3">
+                                    <i data-lucide="clipboard-list" class="w-5 h-5"></i> Verification Checklist
+                                </h3>
+                                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                                    <div class="lg:col-span-4">
+                                        <div class="p-4 bg-white rounded-3xl border border-slate-200 shadow-sm flex items-center justify-between cursor-pointer h-16" onclick="sncoToggleComposition()">
+                                            <div class="space-y-1">
+                                                <p class="text-[9px] font-black uppercase text-slate-700 tracking-tighter">Board Composition OK?</p>
+                                                <p id="board-req-text" class="text-[8px] text-slate-400 italic font-medium leading-none"></p>
+                                            </div>
+                                            <input type="checkbox" id="board-comp-checkbox" class="w-5 h-5 rounded text-blue-600 pointer-events-none">
+                                        </div>
                                     </div>
-                                    <div>
-                                        <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-1">Rank</label>
-                                        <input type="text" id="rev-rank" oninput="sncoUpdateField('reviewer', 'rank', this.value)" class="guidance-trigger w-full bg-white border border-slate-200 rounded-xl p-3 text-xs font-bold outline-none" placeholder="SMSGT">
-                                    </div>
-                                    <div>
-                                        <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-1">Unit</label>
-                                        <input type="text" id="rev-unit" oninput="sncoUpdateField('reviewer', 'unit', this.value)" class="guidance-trigger w-full bg-white border border-slate-200 rounded-xl p-3 text-xs font-bold outline-none" placeholder="144 FSS / MPF">
-                                    </div>
+                                    <div id="folder-checklist" class="lg:col-span-8 grid grid-cols-1 md:grid-cols-2 gap-2"></div>
                                 </div>
                             </div>
 
-                            <div class="lg:col-span-8 space-y-6">
-                                <h3 class="font-black text-xs uppercase text-blue-600 flex items-center gap-3"><i data-lucide="clipboard-list" class="w-5 h-5"></i> Verification Check</h3>
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <!-- BOARD COMPOSITION BOX -->
-                                    <div class="p-4 bg-white rounded-3xl border border-slate-200 shadow-sm flex items-center justify-between cursor-pointer h-16" onclick="sncoToggleComposition()">
-                                        <div class="space-y-1">
-                                            <p class="text-[9px] font-black uppercase text-slate-700 tracking-tighter">Board Composition OK?</p>
-                                            <p id="board-req-text" class="text-[8px] text-slate-400 italic font-medium leading-none"></p>
+                            <!-- BOTTOM: REVIEWER INFO -->
+                            <div class="bg-slate-50 p-8 rounded-[40px] border border-slate-200 shadow-inner space-y-6">
+                                <h3 class="font-black text-xs uppercase text-blue-600 flex items-center gap-3">
+                                    <i data-lucide="user-check" class="w-5 h-5"></i> Certifying Reviewer Details
+                                </h3>
+                                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                                    <!-- INPUTS -->
+                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                        <div class="md:col-span-3">
+                                            <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-1">Full Name</label>
+                                            <input type="text" id="rev-name" oninput="sncoUpdateField('reviewer', 'name', this.value)" class="guidance-trigger w-full bg-white border border-slate-200 rounded-xl p-3 text-xs font-bold outline-none" placeholder="DOE, JOHN B">
                                         </div>
-                                        <input type="checkbox" id="board-comp-checkbox" class="w-5 h-5 rounded text-blue-600 pointer-events-none">
+                                        <div class="md:col-span-1">
+                                            <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-1">Rank</label>
+                                            <input type="text" id="rev-rank" oninput="sncoUpdateField('reviewer', 'rank', this.value)" class="guidance-trigger w-full bg-white border border-slate-200 rounded-xl p-3 text-xs font-bold outline-none" placeholder="SMSGT">
+                                        </div>
+                                        <div class="md:col-span-2">
+                                            <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-1">Unit</label>
+                                            <input type="text" id="rev-unit" oninput="sncoUpdateField('reviewer', 'unit', this.value)" class="guidance-trigger w-full bg-white border border-slate-200 rounded-xl p-3 text-xs font-bold outline-none" placeholder="144 FSS / MPF">
+                                        </div>
                                     </div>
-                                    <!-- DYNAMIC CHECKLIST -->
-                                    <div id="folder-checklist" class="col-span-2 grid grid-cols-1 md:grid-cols-2 gap-2"></div>
+                                    <!-- REMARKS -->
+                                    <div>
+                                        <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-1">Reviewer Remarks</label>
+                                        <textarea id="rev-comments" oninput="sncoUpdateField('reviewer', 'comments', this.value)" class="guidance-trigger w-full bg-white border border-slate-200 rounded-xl p-3 text-[10px] font-medium min-h-[105px] outline-none" placeholder="Enter board findings or waiver notes..."></textarea>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -321,13 +352,17 @@
 
             <!-- SIDEBAR AUDIT -->
             <div class="lg:col-span-4 flex flex-col h-full">
-                <div class="bg-white rounded-[40px] p-8 border border-slate-200 shadow-sm flex-1 flex flex-col">
+                <div class="bg-white rounded-[40px] p-8 border border-slate-200 shadow-sm flex-1 flex flex-col max-h-[850px] sticky top-8">
                     <div class="flex items-center gap-2 mb-6 border-b border-slate-50 pb-4">
                         <i data-lucide="layout-dashboard" class="w-5 h-5 text-blue-600"></i>
                         <h3 class="text-xs font-black text-slate-400 uppercase tracking-widest">Compliance Audit</h3>
                     </div>
-                    <div id="audit-results" class="flex-1 space-y-3 custom-scrollbar overflow-y-auto pr-2"></div>
-                    <div id="audit-summary-card" class="mt-6 p-6 rounded-3xl border-2 transition-all duration-500">
+                    
+                    <div id="audit-results" class="flex-1 space-y-3 custom-scrollbar overflow-y-auto pr-2 max-h-[500px]">
+                        <!-- Injected by JS -->
+                    </div>
+                    
+                    <div id="audit-summary-card" class="mt-6 p-6 rounded-3xl border-2 transition-all duration-500 shrink-0">
                         <p class="text-[9px] font-black uppercase text-slate-400 tracking-widest mb-1">Global Verdict</p>
                         <p id="audit-summary-verdict" class="text-xl font-black italic tracking-tighter"></p>
                     </div>
@@ -342,33 +377,37 @@
             'prof-unit': "Assigned Unit designation. Ensure correct Wing/Group/Squadron is identified for Board alignment.",
             'prof-rank': "Select target promotion grade. Note: TSgt (72 Mo TIS), MSgt (96 Mo TIS), SMSgt (132 Mo TIS), CMSgt (168 Mo TIS).",
             'prof-package': "Standard: Vacancy Hire. STEP: Accelerated Promotion. Retraining: Promoting into new AFSC.",
-            'prof-fmp': "Identify specific Force Management Plan justifications if applicable. Mandatory for STEP packages.",
-            'service-payDate': "Pay Entry Base Date (PEBD). Used to calculate Satisfactory Service years. Critical for NGB 23 audit.",
+            'service-payDate': "Pay Entry Base Date (PEBD). Used to calculate Satisfactory Service years.",
             'service-dor': "Current Date of Rank. SNCO promotions generally require 24 months Time-In-Grade (TIG).",
             'service-epbDate': "Latest EPB Closeout. EPBs must be current (within cycle) to validate promotion eligibility.",
             'service-yrs-input': "Total Years of Satisfactory Service (Points) from NGB 23 or TAFMS (AGR).",
             'service-mos-input': "Remaining months toward the next year of service.",
             'readiness-fitScore': "Current PFA Score. Must be 75.0 or higher.",
-            'readiness-fitDate': "Date of most recent PFA. The validity period starts from the date taken.",
+            'readiness-fitDate': "Date of most recent PFA.",
             'clearance-input': "Security Clearance Adjudication Date. Must be within 5 years.",
-            'rev-name': "Enter the name of the MPF official or validating SNCO responsible for this certification.",
-            'rev-rank': "Current military grade of the certifying official.",
-            'rev-unit': "Organizational assignment of the certifying official (e.g., 144 FSS/FSP)."
+            'rev-name': "Certifying official name.",
+            'rev-rank': "Certifying official rank.",
+            'rev-unit': "Certifying official unit.",
+            'rev-comments': "Include board recommendations, waiver justifications, or specific discrepancies for State review."
         };
 
         const standards = {
-            TSgt: { minTis: 72, minTig: 24, skill: 7, tisLabel: '6 Yrs', tigLabel: '2 Yrs', composition: "2 TSgts and 1 MSgt" },
-            MSgt: { minTis: 96, minTig: 24, skill: 7, tisLabel: '8 Yrs', tigLabel: '2 Yrs', composition: "Min 2 MSgts and 1 SMSgt", stepComposition: "Wing CCM + 2 SNCOs" },
-            SMSgt: { minTis: 132, minTig: 24, skill: 7, tisLabel: '11 Yrs', tigLabel: '2 Yrs', composition: "Min 2 SMSgts and 1 CMSgt", stepComposition: "State CCM + Wing CCMs" },
-            CMSgt: { minTis: 168, minTig: 24, skill: 9, tisLabel: '14 Yrs', tigLabel: '2 Yrs', composition: "3 CMSgts (inc. Wing CCM)", stepComposition: "State CCM + Wing CCMs" },
+            TSgt: { minTis: 72, minTig: 24, skill: 7, tisLabel: '6 Yrs', pme: [], composition: "2 TSgts and 1 MSgt" },
+            MSgt: { minTis: 96, minTig: 24, skill: 7, pme: ['NCOA'], tisLabel: '8 Yrs', composition: "Min 2 MSgts and 1 SMSgt", stepComposition: "Wing CCM + 2 SNCOs" },
+            SMSgt: { minTis: 132, minTig: 24, skill: 7, pme: ['SNCOA'], degree: true, tisLabel: '11 Yrs', composition: "Min 2 SMSgts and 1 CMSgt", stepComposition: "State CCM + Wing CCMs" },
+            CMSgt: { minTis: 168, minTig: 24, skill: 9, pme: ['SNCOA'], degree: true, tisLabel: '14 Yrs', composition: "3 CMSgts (inc. Wing CCM)", stepComposition: "State CCM + Wing CCMs" },
         };
 
         let sncoState = {
             currentStep: 1,
             isFirstSgt: false,
             profile: { name: '', unit: '', component: 'DSG', targetRank: 'MSgt', packageType: 'Standard' },
-            reviewer: { name: '', rank: '', unit: '' },
-            service: { dor: '', payDate: '', tafmsYears: '', tafmsMonths: '', satYears: '', satMonths: '', epbDate: '', pafscLevel: '7', dafscLevel: '7' },
+            reviewer: { name: '', rank: '', unit: '', comments: '' },
+            service: { 
+                dor: '', payDate: '', tafmsYears: '', tafmsMonths: '', satYears: '', satMonths: '', epbDate: '', pafscLevel: '7', dafscLevel: '7',
+                pmeComplete: { NCOA: false, SNCOA: false },
+                degreeComplete: false
+            },
             stepFlags: { isSoleOccupant: false, priorStepToGrade: false, fmpRemarks: '' },
             readiness: { fitScore: '', fitDate: '', clearanceDate: '', adminHolds: { demotion: false, retirement: false, suspended: false } },
             board: { compositionMet: false },
@@ -379,7 +418,7 @@
             const popup = document.getElementById('guidance-popup');
             const textEl = document.getElementById('guidance-text');
             document.addEventListener('focusin', (e) => {
-                if (e.target.classList.contains('guidance-trigger')) {
+                if (e.target && e.target.classList && e.target.classList.contains('guidance-trigger')) {
                     const text = guidanceMap[e.target.id];
                     if (text) {
                         textEl.innerText = text;
@@ -396,7 +435,7 @@
                 }
             });
             document.addEventListener('focusout', (e) => {
-                if (e.target.classList.contains('guidance-trigger')) {
+                if (e.target && e.target.classList && e.target.classList.contains('guidance-trigger')) {
                     popup.classList.remove('opacity-100');
                     popup.style.transform = 'translateY(10px)';
                 }
@@ -423,7 +462,7 @@
         }
 
         function sncoUpdateField(category, field, value) {
-            if (category) sncoState[category][field] = value;
+            if (category && sncoState[category]) sncoState[category][field] = value;
             sncoRender();
         }
 
@@ -434,67 +473,34 @@
             sncoRender();
         }
 
-        function sncoChangeStep(dir) {
-            sncoState.currentStep = Math.max(1, Math.min(4, sncoState.currentStep + dir));
-            sncoRender();
-        }
-
-        function sncoToggleStepFlag(flag) {
-            sncoState.stepFlags[flag] = !sncoState.stepFlags[flag];
-            sncoRender();
-        }
-
-        function sncoToggleAdminHold(id) {
-            sncoState.readiness.adminHolds[id] = !sncoState.readiness.adminHolds[id];
-            sncoRender();
-        }
-
-        function sncoToggleFirstSgt() {
-            sncoState.isFirstSgt = !sncoState.isFirstSgt;
-            sncoRender();
-        }
-
-        function sncoToggleComposition() {
-            sncoState.board.compositionMet = !sncoState.board.compositionMet;
-            sncoRender();
-        }
-
-        function sncoToggleCheck(id) {
-            sncoState.checklist[id] = !sncoState.checklist[id];
-            sncoRender();
-        }
+        function sncoTogglePME(pme) { sncoState.service.pmeComplete[pme] = !sncoState.service.pmeComplete[pme]; sncoRender(); }
+        function sncoToggleDegree() { sncoState.service.degreeComplete = !sncoState.service.degreeComplete; sncoRender(); }
+        function sncoChangeStep(dir) { sncoState.currentStep = Math.max(1, Math.min(4, sncoState.currentStep + dir)); sncoRender(); }
+        function sncoToggleStepFlag(flag) { sncoState.stepFlags[flag] = !sncoState.stepFlags[flag]; sncoRender(); }
+        function sncoToggleAdminHold(id) { sncoState.readiness.adminHolds[id] = !sncoState.readiness.adminHolds[id]; sncoRender(); }
+        function sncoToggleFirstSgt() { sncoState.isFirstSgt = !sncoState.isFirstSgt; sncoRender(); }
+        function sncoToggleComposition() { sncoState.board.compositionMet = !sncoState.board.compositionMet; sncoRender(); }
+        function sncoToggleCheck(id) { sncoState.checklist[id] = !sncoState.checklist[id]; sncoRender(); }
 
         function openPrintPreview() {
             const warnings = sncoGetWarnings();
             const isErr = warnings.some(w => w.t === 'error');
+            const el = (id) => document.getElementById(id);
+            if (el('prev-name')) el('prev-name').innerText = sncoState.profile.name || "UNSPECIFIED";
+            if (el('prev-unit')) el('prev-unit').innerText = sncoState.profile.unit || "UNSPECIFIED";
+            if (el('prev-rank')) el('prev-rank').innerText = `${sncoState.profile.targetRank} (${sncoState.profile.packageType})`;
+            if (el('prev-comments')) el('prev-comments').innerText = sncoState.reviewer.comments || "NO REMARKS PROVIDED";
             
-            document.getElementById('prev-name').innerText = sncoState.profile.name || "UNSPECIFIED";
-            document.getElementById('prev-unit').innerText = sncoState.profile.unit || "UNSPECIFIED";
-            document.getElementById('prev-rank').innerText = `${sncoState.profile.targetRank} (${sncoState.profile.packageType})`;
-            
-            const statusEl = document.getElementById('prev-status');
-            statusEl.innerText = isErr ? 'REJECTED' : 'VALIDATED';
-            statusEl.className = `text-xs font-black ${isErr ? 'text-red-600' : 'text-blue-600'}`;
-
-            const revInfo = document.getElementById('prev-reviewer-info');
-            revInfo.innerText = `${sncoState.reviewer.name || '____________'}, ${sncoState.reviewer.rank || '____'}, ${sncoState.reviewer.unit || '____'}`;
-
-            const auditList = document.getElementById('prev-audit-list');
-            if (warnings.length === 0) {
-                auditList.innerHTML = `<p class="text-[9px] font-bold text-green-600">FULLY COMPLIANT PACKAGE</p>`;
-            } else {
-                auditList.innerHTML = warnings.map(w => `
-                    <div class="flex items-start gap-2 py-1">
-                        <span class="w-1 h-1 rounded-full mt-1.5 ${w.t === 'error' ? 'bg-red-600' : 'bg-orange-500'}"></span>
-                        <p class="text-[9px]"><span class="font-black">${w.f}:</span> ${w.m}</p>
-                    </div>
-                `).join('');
-            }
-
-            document.getElementById('print-modal').classList.remove('hidden');
+            const statusEl = el('prev-status');
+            if (statusEl) { statusEl.innerText = isErr ? 'REJECTED' : 'VALIDATED'; statusEl.className = `text-xs font-black ${isErr ? 'text-red-600' : 'text-blue-600'}`; }
+            const revInfo = el('prev-reviewer-info');
+            if (revInfo) revInfo.innerText = `${sncoState.reviewer.name || '____________'}, ${sncoState.reviewer.rank || '____'}, ${sncoState.reviewer.unit || '____'}`;
+            const auditList = el('prev-audit-list');
+            if (auditList) auditList.innerHTML = warnings.length === 0 ? `<p class="text-[9px] font-bold text-green-600">FULLY COMPLIANT PACKAGE</p>` : warnings.map(w => `<div class="flex items-start gap-2 py-1"><span class="w-1 h-1 rounded-full mt-1.5 ${w.t === 'error' ? 'bg-red-600' : 'bg-orange-500'}"></span><p class="text-[9px]"><span class="font-black">${w.f}:</span> ${w.m}</p></div>`).join('');
+            if (el('print-modal')) el('print-modal').classList.remove('hidden');
         }
 
-        function closePrintPreview() { document.getElementById('print-modal').classList.add('hidden'); }
+        function closePrintPreview() { if (document.getElementById('print-modal')) document.getElementById('print-modal').classList.add('hidden'); }
 
         function sncoGetMetrics() {
             const tis = calcMonths(sncoState.service.payDate);
@@ -520,45 +526,23 @@
 
             if (!sncoState.profile.name || !sncoState.profile.unit) warnings.push({ f: 'Incomplete', m: 'Candidate Name/Unit is required.', t: 'error' });
             if (isRetraining) warnings.push({ f: 'Retraining', m: 'Para 10.12 Retraining detected. SOU mandatory.', t: 'warning' });
-
             const currentTisValue = isAGR ? metrics.tafms : metrics.sat;
-            const tisLabel = isAGR ? 'Active Service (TAFMS)' : 'Satisfactory Service (NGB 23)';
-            
-            if (currentTisValue < s.minTis) {
-                warnings.push({ f: 'Eligibility', m: `Needs ${s.tisLabel} ${tisLabel}. Current: ${formatYM(currentTisValue)}.`, t: 'error' });
-            }
-
+            if (currentTisValue < s.minTis) warnings.push({ f: 'Eligibility', m: `Needs ${s.tisLabel} ${isAGR ? 'Active Service' : 'Satisfactory Service'}.`, t: 'error' });
             if (metrics.tig === null) warnings.push({ f: 'Incomplete', m: 'Date of Rank missing.', t: 'error' });
             else if (metrics.tig < 24 && !sncoState.profile.targetRank.startsWith('T')) warnings.push({ f: 'TIG', m: 'Needs 24 Mos TIG.', t: 'error' });
-            
             if (!sncoState.service.epbDate) warnings.push({ f: 'Incomplete', m: 'EPB Closeout Date required.', t: 'error' });
             if (!sncoState.readiness.fitScore) warnings.push({ f: 'Incomplete', m: 'Fitness data missing.', t: 'error' });
+            if (!sncoState.readiness.clearanceDate) warnings.push({ f: 'Security', m: 'Adjudication Date missing.', t: 'error' });
+            else if (metrics.clearanceAge >= 60) warnings.push({ f: 'Security', m: `Clearance is ${metrics.clearanceAge} months old (> 5 Yrs).`, t: 'warning' });
             
-            if (!sncoState.readiness.clearanceDate) {
-                warnings.push({ f: 'Security', m: 'Adjudication Date missing.', t: 'error' });
-            } else if (metrics.clearanceAge >= 60) {
-                warnings.push({ f: 'Security', m: `Clearance is ${metrics.clearanceAge} months old (> 5 Yrs). Memo required.`, t: 'warning' });
-            }
-            
+            // GRADE-SPECIFIC PME AUDIT
+            if (s.pme) s.pme.forEach(pme => { if (!sncoState.service.pmeComplete[pme]) warnings.push({ f: 'PME Missing', m: `Requires ${pme} completion for ${sncoState.profile.targetRank}.`, t: 'error' }); });
+            if (s.degree && !sncoState.service.degreeComplete) warnings.push({ f: 'Education', m: `Requires CCAF or higher for ${sncoState.profile.targetRank}.`, t: 'error' });
+
             if (!sncoState.board.compositionMet) warnings.push({ f: 'Board', m: 'Composition not verified.', t: 'error' });
             
-            const checklistItems = [
-                { id: 'ca26', l: 'CA ANG Form 26' },
-                { id: 'sou', l: 'Service SOU (Att 3)' },
-                { id: 'memo', l: 'Board Letter' },
-                { id: 'epb', l: 'EPB' },
-                { id: 'fit', l: 'Fitness Printout' },
-                { id: 'sec_clearance', l: 'Sec Clearance Memo' },
-                { id: 'retrain_sou', l: 'Retrain SOU', h: !isRetraining },
-                { id: 'first_sgt_sou', l: '1st Sgt SOU', h: !sncoState.isFirstSgt }
-            ];
-
-            checklistItems.forEach(item => {
-                if (!item.h && !sncoState.checklist[item.id]) {
-                    warnings.push({ f: 'Missing File', m: `Verification folder requires: ${item.l}.`, t: 'error' });
-                }
-            });
-            
+            const checklistItems = [{id:'ca26',l:'CA ANG Form 26'},{id:'sou',l:'Service SOU (Att 3)'},{id:'memo',l:'Board Letter'},{id:'epb',l:'EPB'},{id:'fit',l:'Fitness Printout'},{id:'sec_clearance',l:'Sec Clearance Memo'},{id:'retrain_sou',l:'Retrain SOU',h:!isRetraining},{id:'first_sgt_sou',l:'1st Sgt SOU',h:!sncoState.isFirstSgt}];
+            checklistItems.forEach(item => { if (!item.h && !sncoState.checklist[item.id]) warnings.push({ f: 'Missing File', m: `Verify folder requires: ${item.l}.`, t: 'error' }); });
             return warnings;
         }
 
@@ -568,109 +552,117 @@
             const isAGR = sncoState.profile.component === 'AGR';
             const isRetraining = (sncoState.profile.packageType === 'Retraining') || (parseInt(sncoState.service.pafscLevel) >= s.skill && parseInt(sncoState.service.dafscLevel) < s.skill);
 
-            document.querySelectorAll('.snco-step').forEach((el, i) => el.classList.toggle('hidden', i + 1 !== sncoState.currentStep));
-            const stepper = document.getElementById('stepper-container');
-            stepper.innerHTML = ["Identity", "Service", "Readiness", "Verification"].map((l, i) => `<div class="flex flex-col items-center gap-2 flex-1 relative ${sncoState.currentStep >= i+1 ? 'text-blue-600' : 'text-slate-400'}"><div class="w-10 h-10 rounded-full border-2 flex items-center justify-center font-bold transition-all ${sncoState.currentStep >= i+1 ? 'bg-blue-600 text-white border-blue-600' : 'bg-white border-slate-200'}">${sncoState.currentStep > i+1 ? '<i data-lucide="check-circle-2" class="w-6 h-6"></i>' : i+1}</div><span class="text-[10px] font-black uppercase tracking-widest text-center">${l}</span></div>`).join('');
+            const el = (id) => document.getElementById(id);
 
-            document.getElementById('tis-label').innerText = `Pay Entry Date (Pay Age: ${metrics.tis !== null ? formatYM(metrics.tis) : 'N/A'})`;
-            document.getElementById('tig-label').innerText = `Date of Rank (TIG: ${metrics.tig !== null ? formatYM(metrics.tig) : 'N/A'})`;
-            document.getElementById('step1-extra').classList.toggle('hidden', !sncoState.profile.packageType.startsWith('STEP'));
-            document.getElementById('flag-sole').checked = sncoState.stepFlags.isSoleOccupant;
-            document.getElementById('flag-prior').checked = sncoState.stepFlags.priorStepToGrade;
+            document.querySelectorAll('.snco-step').forEach((step, i) => {
+                if (step) step.classList.toggle('hidden', i + 1 !== sncoState.currentStep);
+            });
+
+            if (el('stepper-container')) {
+                el('stepper-container').innerHTML = ["Identity", "Service", "Readiness", "Verification"].map((l, i) => `<div class="flex flex-col items-center gap-2 flex-1 relative ${sncoState.currentStep >= i+1 ? 'text-blue-600' : 'text-slate-400'}"><div class="w-10 h-10 rounded-full border-2 flex items-center justify-center font-bold transition-all ${sncoState.currentStep >= i+1 ? 'bg-blue-600 text-white border-blue-600' : 'bg-white border-slate-200'}">${sncoState.currentStep > i+1 ? '<i data-lucide="check-circle-2" class="w-6 h-6"></i>' : i+1}</div><span class="text-[10px] font-black uppercase tracking-widest text-center">${l}</span></div>`).join('');
+            }
+
+            if (el('tis-label')) el('tis-label').innerText = `Pay Entry Date (Pay Age: ${metrics.tis !== null ? formatYM(metrics.tis) : 'N/A'})`;
+            if (el('tig-label')) el('tig-label').innerText = `Date of Rank (TIG: ${metrics.tig !== null ? formatYM(metrics.tig) : 'N/A'})`;
             
-            const componentToggle = document.getElementById('component-toggle');
-            componentToggle.innerHTML = ['DSG', 'AGR', 'Technician', 'Statutory Tour'].map(c => `<button onclick="sncoUpdateField('profile', 'component', '${c}')" class="flex-1 py-3 text-[10px] font-black rounded-lg transition-all ${sncoState.profile.component === c ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-500 hover:bg-white/50'}">${c}</button>`).join('');
+            // GRADE-SPECIFIC PME UI VISIBILITY
+            if (el('row-ncoa')) el('row-ncoa').classList.toggle('hidden', sncoState.profile.targetRank !== 'MSgt');
+            if (el('row-sncoa')) el('row-sncoa').classList.toggle('hidden', !['SMSgt', 'CMSgt'].includes(sncoState.profile.targetRank));
+            if (el('row-degree')) el('row-degree').classList.toggle('hidden', !['SMSgt', 'CMSgt'].includes(sncoState.profile.targetRank));
 
-            const tafmsContainer = document.getElementById('tafms-container');
-            const yrsInput = document.getElementById('service-yrs-input');
-            const mosInput = document.getElementById('service-mos-input');
-            const summaryVal = document.getElementById('service-summary-value');
-            const typeLabel = document.getElementById('service-type-label');
+            if (el('flag-ncoa')) el('flag-ncoa').checked = sncoState.service.pmeComplete.NCOA;
+            if (el('flag-sncoa')) el('flag-sncoa').checked = sncoState.service.pmeComplete.SNCOA;
+            if (el('flag-degree')) el('flag-degree').checked = sncoState.service.degreeComplete;
 
-            if (isAGR) {
-                tafmsContainer.className = "p-6 rounded-[32px] space-y-4 shadow-xl transition-all bg-slate-900 border-blue-500/30 text-white";
-                typeLabel.innerText = "AGR ACTIVE SERVICE (TAFMS)";
-                summaryVal.innerText = formatYM(metrics.tafms);
-                yrsInput.className = "guidance-trigger w-full rounded-xl p-3 text-xl font-black outline-none bg-slate-800 border-slate-700 text-white";
-                mosInput.className = "guidance-trigger w-full rounded-xl p-3 text-xl font-black outline-none bg-slate-800 border-slate-700 text-white";
-                if (document.activeElement !== yrsInput) yrsInput.value = sncoState.service.tafmsYears;
-                if (document.activeElement !== mosInput) mosInput.value = sncoState.service.tafmsMonths;
-            } else {
-                tafmsContainer.className = "p-6 rounded-[32px] space-y-4 shadow-xl transition-all bg-white border-slate-200 text-slate-900";
-                typeLabel.innerText = "SATISFACTORY SERVICE (NGB 23)";
-                summaryVal.innerText = formatYM(metrics.sat);
-                yrsInput.className = "guidance-trigger w-full rounded-xl p-3 text-xl font-black outline-none bg-slate-50 border-slate-200 text-slate-900 focus:bg-white focus:border-blue-500 transition-all";
-                mosInput.className = "guidance-trigger w-full rounded-xl p-3 text-xl font-black outline-none bg-slate-50 border-slate-200 text-slate-900 focus:bg-white focus:border-blue-500 transition-all";
-                if (document.activeElement !== yrsInput) yrsInput.value = sncoState.service.satYears;
-                if (document.activeElement !== mosInput) mosInput.value = sncoState.service.satMonths;
+            if (el('component-toggle')) {
+                el('component-toggle').innerHTML = ['DSG', 'AGR', 'Technician', 'Statutory Tour'].map(c => `<button onclick="sncoUpdateField('profile', 'component', '${c}')" class="flex-1 py-3 text-[10px] font-black rounded-lg transition-all ${sncoState.profile.component === c ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-500 hover:bg-white/50'}">${c}</button>`).join('');
             }
 
-            const adminFlags = document.getElementById('admin-flags');
-            adminFlags.innerHTML = ['demotion', 'retirement', 'suspended'].map(id => `<div class="flex items-center justify-between"><span class="text-xs font-bold text-slate-700 capitalize">${id.replace('suspended', 'Legal/Hold')}?</span><button onclick="sncoToggleAdminHold('${id}')" class="w-12 h-6 rounded-full relative transition-all ${sncoState.readiness.adminHolds[id] ? 'bg-red-600' : 'bg-slate-300'}"><div class="absolute top-1 w-4 h-4 bg-white rounded-full transition-all ${sncoState.readiness.adminHolds[id] ? 'left-7' : 'left-1'}"></div></button></div>`).join('');
+            const yrsInput = el('service-yrs-input');
+            const mosInput = el('service-mos-input');
+            const summaryVal = el('service-summary-value');
+            const typeLabel = el('service-type-label');
+            const tafmsContainer = el('tafms-container');
 
-            const auditEl = document.getElementById('audit-results');
-            const summaryCard = document.getElementById('audit-summary-card');
-            const verdictEl = document.getElementById('audit-summary-verdict');
-            const warnings = sncoGetWarnings();
-            const isErr = warnings.some(w => w.t === 'error');
-
-            if (warnings.length === 0) {
-                auditEl.innerHTML = `<div class="flex-1 flex flex-col items-center justify-center py-10 text-center animate-in fade-in"><div class="w-16 h-16 bg-green-50 rounded-full flex items-center justify-center mb-4 shadow-inner ring-4 ring-green-50/50"><i data-lucide="check-circle-2" class="w-8 h-8 text-green-600"></i></div><p class="text-[11px] font-black text-green-900 uppercase italic tracking-widest">Compliant Record</p></div>`;
-                summaryCard.className = "mt-6 p-6 rounded-3xl border-2 bg-green-50 border-green-200 text-green-900";
-                verdictEl.innerText = "PASS";
-            } else {
-                auditEl.innerHTML = warnings.map(w => `<div class="p-4 rounded-2xl border flex gap-3 items-start animate-in zoom-in-95 ${w.t === 'error' ? 'bg-red-50 border-red-100 text-red-700' : 'bg-orange-50 border-orange-100 text-orange-700'}"><i data-lucide="${w.t === 'error' ? 'shield-alert' : 'alert-circle'}" class="w-5 h-5 mt-0.5 shrink-0"></i><div><p class="text-[9px] font-black uppercase opacity-60 tracking-widest leading-none">${w.f}</p><p class="text-[10px] font-bold leading-tight">${w.m}</p></div></div>`).join('');
-                summaryCard.className = `mt-6 p-6 rounded-3xl border-2 ${isErr ? 'bg-red-50 border-red-200 text-red-900' : 'bg-orange-50 border-orange-200 text-orange-900'}`;
-                verdictEl.innerText = isErr ? "FAIL" : "CAUTION";
-            }
-
-            const clrInput = document.getElementById('clearance-input');
-            if (clrInput) {
-                if (metrics.clearanceAge >= 60) {
-                    clrInput.className = "guidance-trigger w-full border-2 rounded-xl p-3 font-bold outline-none bg-orange-50 border-orange-400 text-orange-900 shadow-inner";
+            if (tafmsContainer && yrsInput && mosInput && summaryVal && typeLabel) {
+                if (isAGR) {
+                    tafmsContainer.className = "p-6 rounded-[32px] space-y-4 shadow-xl transition-all bg-slate-900 border-blue-500/30 text-white";
+                    typeLabel.innerText = "AGR ACTIVE SERVICE (TAFMS)";
+                    summaryVal.innerText = formatYM(metrics.tafms);
+                    yrsInput.className = "guidance-trigger w-full rounded-xl p-3 text-xl font-black outline-none bg-slate-800 border-slate-700 text-white";
+                    mosInput.className = "guidance-trigger w-full rounded-xl p-3 text-xl font-black outline-none bg-slate-800 border-slate-700 text-white";
+                    if (document.activeElement !== yrsInput) yrsInput.value = sncoState.service.tafmsYears;
+                    if (document.activeElement !== mosInput) mosInput.value = sncoState.service.tafmsMonths;
                 } else {
-                    clrInput.className = "guidance-trigger w-full border-2 rounded-xl p-3 font-bold outline-none bg-slate-50 border-slate-200";
+                    tafmsContainer.className = "p-6 rounded-[32px] space-y-4 shadow-xl transition-all bg-white border-slate-200 text-slate-900";
+                    typeLabel.innerText = "SATISFACTORY SERVICE (NGB 23)";
+                    summaryVal.innerText = formatYM(metrics.sat);
+                    yrsInput.className = "guidance-trigger w-full rounded-xl p-3 text-xl font-black outline-none bg-slate-50 border-slate-200 text-slate-900 focus:bg-white focus:border-blue-500 transition-all";
+                    mosInput.className = "guidance-trigger w-full rounded-xl p-3 text-xl font-black outline-none bg-slate-50 border-slate-200 text-slate-900 focus:bg-white focus:border-blue-500 transition-all";
+                    if (document.activeElement !== yrsInput) yrsInput.value = sncoState.service.satYears;
+                    if (document.activeElement !== mosInput) mosInput.value = sncoState.service.satMonths;
                 }
             }
 
-            document.getElementById('prev-btn').disabled = sncoState.currentStep === 1;
-            const sgtBtn = document.getElementById('first-sgt-btn');
-            sgtBtn.innerText = `1st Sgt Mode: ${sncoState.isFirstSgt ? 'ACTIVE' : 'OFF'}`;
-            sgtBtn.className = `px-4 py-2 rounded-xl text-[10px] font-black uppercase border-2 transition-all ${sncoState.isFirstSgt ? 'bg-red-600 border-red-600 text-white' : 'bg-white border-slate-200 text-slate-500'}`;
-            const nextBtn = document.getElementById('next-btn');
-            const statusBadge = document.getElementById('final-status-badge');
-            if (sncoState.currentStep < 4) { nextBtn.classList.remove('hidden'); statusBadge.classList.add('hidden'); } 
-            else {
-                nextBtn.classList.add('hidden'); statusBadge.classList.remove('hidden');
-                statusBadge.innerText = isErr ? 'Rejected' : 'Validated for JFHQ';
-                statusBadge.className = `px-10 py-3 rounded-xl font-black text-xs uppercase tracking-widest shadow-lg ${isErr ? 'bg-red-600 text-white' : 'bg-green-600 text-white'}`;
+            if (el('admin-flags')) {
+                el('admin-flags').innerHTML = ['demotion', 'retirement', 'suspended'].map(id => `<div class="flex items-center justify-between"><span class="text-xs font-bold text-slate-700 capitalize">${id.replace('suspended', 'Legal/Hold')}?</span><button onclick="sncoToggleAdminHold('${id}')" class="w-12 h-6 rounded-full relative transition-all ${sncoState.readiness.adminHolds[id] ? 'bg-red-600' : 'bg-slate-300'}"><div class="absolute top-1 w-4 h-4 bg-white rounded-full transition-all ${sncoState.readiness.adminHolds[id] ? 'left-7' : 'left-1'}"></div></button></div>`).join('');
+            }
+
+            const auditEl = el('audit-results');
+            const summaryCard = el('audit-summary-card');
+            const verdictEl = el('audit-summary-verdict');
+            const warnings = sncoGetWarnings();
+            const isErr = warnings.some(w => w.t === 'error');
+
+            if (auditEl && summaryCard && verdictEl) {
+                if (warnings.length === 0) {
+                    auditEl.innerHTML = `<div class="flex-1 flex flex-col items-center justify-center py-10 text-center animate-in fade-in"><div class="w-16 h-16 bg-green-50 rounded-full flex items-center justify-center mb-4 shadow-inner ring-4 ring-green-50/50"><i data-lucide="check-circle-2" class="w-8 h-8 text-green-600"></i></div><p class="text-[11px] font-black text-green-900 uppercase italic tracking-widest">Compliant Record</p></div>`;
+                    summaryCard.className = "mt-6 p-6 rounded-3xl border-2 bg-green-50 border-green-200 text-green-900 shrink-0";
+                    verdictEl.innerText = "PASS";
+                } else {
+                    auditEl.innerHTML = warnings.map(w => `<div class="p-4 rounded-2xl border flex gap-3 items-start animate-in zoom-in-95 ${w.t === 'error' ? 'bg-red-50 border-red-100 text-red-700' : 'bg-orange-50 border-orange-100 text-orange-700'}"><i data-lucide="${w.t === 'error' ? 'shield-alert' : 'alert-circle'}" class="w-5 h-5 mt-0.5 shrink-0"></i><div><p class="text-[9px] font-black uppercase opacity-60 tracking-widest leading-none">${w.f}</p><p class="text-[10px] font-bold leading-tight">${w.m}</p></div></div>`).join('');
+                    summaryCard.className = `mt-6 p-6 rounded-3xl border-2 shrink-0 ${isErr ? 'bg-red-50 border-red-200 text-red-900' : 'bg-orange-50 border-orange-200 text-orange-900'}`;
+                    verdictEl.innerText = isErr ? "FAIL" : "CAUTION";
+                }
+            }
+
+            const clrInput = el('clearance-input');
+            if (clrInput) { if (metrics.clearanceAge >= 60) clrInput.className = "guidance-trigger w-full border-2 rounded-xl p-3 font-bold outline-none bg-orange-50 border-orange-400 text-orange-900 shadow-inner"; else clrInput.className = "guidance-trigger w-full border-2 rounded-xl p-3 font-bold outline-none bg-slate-50 border-slate-200"; }
+
+            if (el('prev-btn')) el('prev-btn').disabled = sncoState.currentStep === 1;
+            if (el('first-sgt-btn')) {
+                el('first-sgt-btn').innerText = `1st Sgt Mode: ${sncoState.isFirstSgt ? 'ACTIVE' : 'OFF'}`;
+                el('first-sgt-btn').className = `px-4 py-2 rounded-xl text-[10px] font-black uppercase border-2 transition-all ${sncoState.isFirstSgt ? 'bg-red-600 border-red-600 text-white' : 'bg-white border-slate-200 text-slate-500'}`;
+            }
+
+            const nextBtn = el('next-btn');
+            const statusBadge = el('final-status-badge');
+            if (nextBtn && statusBadge) {
+                if (sncoState.currentStep < 4) { nextBtn.classList.remove('hidden'); statusBadge.classList.add('hidden'); } 
+                else {
+                    nextBtn.classList.add('hidden'); statusBadge.classList.remove('hidden');
+                    statusBadge.innerText = isErr ? 'Rejected' : 'Validated for JFHQ';
+                    statusBadge.className = `px-10 py-3 rounded-xl font-black text-xs uppercase tracking-widest shadow-lg ${isErr ? 'bg-red-600 text-white' : 'bg-green-600 text-white'}`;
+                }
             }
 
             if (sncoState.currentStep === 4) {
-                const listEl = document.getElementById('folder-checklist');
+                const listEl = el('folder-checklist');
                 const items = [{id:'ca26',l:'CA ANG Form 26'},{id:'sou',l:'Service SOU (Att 3)'},{id:'memo',l:'Board Letter'},{id:'epb',l:'EPB'},{id:'fit',l:'Fitness Printout'},{id:'sec_clearance',l:'Sec Clearance Memo'},{id:'retrain_sou',l:'Retrain SOU',h:!isRetraining},{id:'first_sgt_sou',l:'1st Sgt SOU',h:!sncoState.isFirstSgt}];
-                
-                // STANDARDIZED BOX SIZE: Added h-16 and uniform structure
-                listEl.innerHTML = items.filter(i=>!i.h).map(i=>`
-                    <div onclick="sncoToggleCheck('${i.id}')" class="h-16 p-3 rounded-2xl border-2 flex items-center justify-between cursor-pointer transition-all ${sncoState.checklist[i.id]?'bg-blue-600 border-blue-600 text-white':'bg-white border-slate-100'}">
-                        <span class="text-[9px] font-black uppercase tracking-tight leading-tight pr-2">${i.l}</span>
-                        ${sncoState.checklist[i.id]?'<i data-lucide="check-circle-2" class="w-4 h-4 text-white shrink-0"></i>':'<div class="w-4 h-4 rounded-full border-2 border-slate-200 shrink-0"></div>'}
-                    </div>`).join('');
-                
-                document.getElementById('board-req-text').innerText = sncoState.profile.packageType.startsWith('STEP') ? s.stepComposition : s.composition;
-                document.getElementById('board-comp-checkbox').checked = sncoState.board.compositionMet;
-                
-                document.getElementById('rev-name').value = sncoState.reviewer.name;
-                document.getElementById('rev-rank').value = sncoState.reviewer.rank;
-                document.getElementById('rev-unit').value = sncoState.reviewer.unit;
+                if (listEl) {
+                    listEl.innerHTML = items.filter(i=>!i.h).map(i=>`<div onclick="sncoToggleCheck('${i.id}')" class="h-16 p-3 rounded-2xl border-2 flex items-center justify-between cursor-pointer transition-all ${sncoState.checklist[i.id]?'bg-blue-600 border-blue-600 text-white':'bg-white border-slate-100'}"><span class="text-[9px] font-black uppercase tracking-tight leading-tight pr-2">${i.l}</span>${sncoState.checklist[i.id]?'<i data-lucide="check-circle-2" class="w-4 h-4 text-white shrink-0"></i>':'<div class="w-4 h-4 rounded-full border-2 border-slate-200 shrink-0"></div>'}</div>`).join('');
+                }
+                if (el('board-req-text')) el('board-req-text').innerText = sncoState.profile.packageType.startsWith('STEP') ? s.stepComposition : s.composition;
+                if (el('board-comp-checkbox')) el('board-comp-checkbox').checked = sncoState.board.compositionMet;
+                if (el('rev-name')) el('rev-name').value = sncoState.reviewer.name;
+                if (el('rev-rank')) el('rev-rank').value = sncoState.reviewer.rank;
+                if (el('rev-unit')) el('rev-unit').value = sncoState.reviewer.unit;
+                if (el('rev-comments')) el('rev-comments').value = sncoState.reviewer.comments;
             }
             lucide.createIcons();
         }
 
-        window.onload = function() {
-            setupGuidanceSystem();
-            sncoRender();
-        }
+        window.onload = function() { setupGuidanceSystem(); sncoRender(); }
     </script>
 </body>
 </html>
