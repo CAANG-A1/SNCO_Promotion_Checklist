@@ -67,6 +67,7 @@
                 </div>
             </div>
             <div class="flex-1 overflow-y-auto p-12 bg-slate-200/50 flex justify-center custom-scrollbar">
+                <!-- PREVIEW PAPER -->
                 <div class="bg-white w-[8.5in] min-h-[11in] shadow-2xl p-16 space-y-12 uppercase text-slate-900">
                     <div class="text-center border-b-4 border-slate-900 pb-8">
                         <h2 class="text-3xl font-black italic tracking-tighter underline decoration-blue-600 underline-offset-8">Promotion Certification</h2>
@@ -75,12 +76,12 @@
 
                     <div class="grid grid-cols-2 gap-8 font-black border-b border-slate-100 pb-8">
                         <div class="space-y-4">
-                            <div><p class="text-[9px] text-slate-400 mb-0.5">Candidate</p><p id="prev-name" class="text-xs font-black"></p></div>
-                            <div><p class="text-[9px] text-slate-400 mb-0.5">Target Rank</p><p id="prev-rank" class="text-xs font-black"></p></div>
+                            <div><p class="text-[9px] text-slate-400 mb-0.5">Candidate</p><p id="prev-name" class="text-xs font-black h-4"></p></div>
+                            <div><p class="text-[9px] text-slate-400 mb-0.5">Target Rank</p><p id="prev-rank" class="text-xs font-black h-4"></p></div>
                         </div>
                         <div class="space-y-4">
-                            <div><p class="text-[9px] text-slate-400 mb-0.5">Assigned Unit</p><p id="prev-unit" class="text-xs font-black"></p></div>
-                            <div><p class="text-[9px] text-slate-400 mb-0.5">Review Status</p><p id="prev-status" class="text-xs font-black"></p></div>
+                            <div><p class="text-[9px] text-slate-400 mb-0.5">Assigned Unit</p><p id="prev-unit" class="text-xs font-black h-4"></p></div>
+                            <div><p class="text-[9px] text-slate-400 mb-0.5">Review Status</p><p id="prev-status" class="text-xs font-black h-4"></p></div>
                         </div>
                     </div>
 
@@ -91,8 +92,14 @@
 
                     <div class="pt-24 grid grid-cols-2 gap-16">
                         <div class="space-y-12">
-                            <div class="border-b-2 border-slate-900 pb-2"><p class="text-[10px] font-bold text-slate-400">Reviewer Name/Rank</p></div>
-                            <div class="border-b-2 border-slate-900 pb-2"><p class="text-[10px] font-bold text-slate-400">Digital Signature / Date</p></div>
+                            <div class="border-b-2 border-slate-900 pb-2">
+                                <p class="text-[10px] font-bold text-slate-400">Reviewer Name/Rank</p>
+                                <p id="prev-reviewer-info" class="text-[11px] font-black mt-1 h-4"></p>
+                            </div>
+                            <div class="border-b-2 border-slate-900 pb-2">
+                                <p class="text-[10px] font-bold text-slate-400">Digital Signature / Date</p>
+                                <div class="h-4"></div>
+                            </div>
                         </div>
                         <div class="bg-slate-50 border-2 border-dashed border-slate-200 rounded-3xl flex flex-col items-center justify-center p-8 text-center">
                             <i data-lucide="shield-check" class="w-12 h-12 text-slate-200 mb-4"></i>
@@ -245,7 +252,7 @@
                                 </div>
                                 <div class="space-y-1">
                                     <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1">Security Adjudication Date</label>
-                                    <input type="date" id="clearance-input" oninput="sncoUpdateField('readiness', 'clearanceDate', this.value)" class="guidance-trigger w-full border-2 rounded-xl p-3 font-bold outline-none bg-slate-50 border-slate-200">
+                                    <input type="date" id="clearance-input" oninput="sncoUpdateField('readiness', 'clearanceDate', this.value)" class="guidance-trigger w-full border-2 rounded-xl p-3 font-bold outline-none bg-slate-50 border-slate-200 transition-all">
                                 </div>
                             </div>
                             <div class="bg-slate-50 p-6 rounded-[32px] border border-slate-200 space-y-4 shadow-inner">
@@ -258,22 +265,40 @@
                     <!-- STEP 4: VERIFICATION -->
                     <div id="step-4" class="snco-step hidden space-y-6 animate-in fade-in slide-in-from-right-4 duration-500">
                         <div class="border-b border-slate-100 pb-4">
-                            <h2 class="text-2xl font-black tracking-tight uppercase tracking-tighter italic leading-none">4. Verification & Summary</h2>
+                            <h2 class="text-2xl font-black tracking-tight uppercase tracking-tighter italic leading-none">4. Verification & Reviewer Profile</h2>
                         </div>
                         <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 bg-slate-50 p-8 rounded-[40px] border border-slate-200 shadow-inner">
-                            <div class="lg:col-span-5 space-y-6">
-                                <h3 class="font-black text-xs uppercase text-blue-600 flex items-center gap-3"><i data-lucide="gavel" class="w-5 h-5"></i> Board Check</h3>
-                                <div class="p-6 bg-white rounded-[32px] border border-slate-200 shadow-sm flex items-center justify-between cursor-pointer" onclick="sncoToggleComposition()">
-                                    <div class="space-y-1">
-                                        <p class="text-[10px] font-black uppercase text-slate-700 tracking-tighter">Composition OK?</p>
-                                        <p id="board-req-text" class="text-[9px] text-slate-400 italic font-medium leading-none"></p>
+                            <!-- REVIEWER INPUT AREA -->
+                            <div class="lg:col-span-4 space-y-4">
+                                <h3 class="font-black text-xs uppercase text-blue-600 flex items-center gap-3"><i data-lucide="user-check" class="w-5 h-5"></i> Reviewer Info</h3>
+                                <div class="space-y-3">
+                                    <div>
+                                        <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-1">Full Name</label>
+                                        <input type="text" id="rev-name" oninput="sncoUpdateField('reviewer', 'name', this.value)" class="guidance-trigger w-full bg-white border border-slate-200 rounded-xl p-3 text-xs font-bold outline-none" placeholder="DOE, JOHN B">
                                     </div>
-                                    <input type="checkbox" id="board-comp-checkbox" class="w-6 h-6 rounded-md text-blue-600 pointer-events-none">
+                                    <div>
+                                        <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-1">Rank</label>
+                                        <input type="text" id="rev-rank" oninput="sncoUpdateField('reviewer', 'rank', this.value)" class="guidance-trigger w-full bg-white border border-slate-200 rounded-xl p-3 text-xs font-bold outline-none" placeholder="SMSGT">
+                                    </div>
+                                    <div>
+                                        <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-1">Unit</label>
+                                        <input type="text" id="rev-unit" oninput="sncoUpdateField('reviewer', 'unit', this.value)" class="guidance-trigger w-full bg-white border border-slate-200 rounded-xl p-3 text-xs font-bold outline-none" placeholder="144 FSS / MPF">
+                                    </div>
                                 </div>
                             </div>
-                            <div class="lg:col-span-7 space-y-6">
-                                <h3 class="font-black text-xs uppercase text-blue-600 flex items-center gap-3"><i data-lucide="clipboard-list" class="w-5 h-5"></i> Folder Verification</h3>
-                                <div id="folder-checklist" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
+
+                            <div class="lg:col-span-8 space-y-6">
+                                <h3 class="font-black text-xs uppercase text-blue-600 flex items-center gap-3"><i data-lucide="clipboard-list" class="w-5 h-5"></i> Verification Check</h3>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div class="p-4 bg-white rounded-3xl border border-slate-200 shadow-sm flex items-center justify-between cursor-pointer" onclick="sncoToggleComposition()">
+                                        <div class="space-y-1">
+                                            <p class="text-[9px] font-black uppercase text-slate-700 tracking-tighter">Board Composition OK?</p>
+                                            <p id="board-req-text" class="text-[8px] text-slate-400 italic font-medium leading-none"></p>
+                                        </div>
+                                        <input type="checkbox" id="board-comp-checkbox" class="w-5 h-5 rounded text-blue-600 pointer-events-none">
+                                    </div>
+                                    <div id="folder-checklist" class="space-y-2 col-span-2 grid grid-cols-2 gap-2"></div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -323,7 +348,10 @@
             'service-mos-input': "Remaining months toward the next year of service.",
             'readiness-fitScore': "Current PFA Score. Must be 75.0 or higher.",
             'readiness-fitDate': "Date of most recent PFA. The validity period starts from the date taken.",
-            'clearance-input': "Security Clearance Adjudication Date. Must be within 5 years."
+            'clearance-input': "Security Clearance Adjudication Date. Must be within 5 years.",
+            'rev-name': "Enter the name of the MPF official or validating SNCO responsible for this certification.",
+            'rev-rank': "Current military grade of the certifying official.",
+            'rev-unit': "Organizational assignment of the certifying official (e.g., 144 FSS/FSP)."
         };
 
         const standards = {
@@ -336,7 +364,8 @@
         let sncoState = {
             currentStep: 1,
             isFirstSgt: false,
-            profile: { name: '', unit: '', component: 'AGR', targetRank: 'MSgt', packageType: 'Standard' },
+            profile: { name: '', unit: '', component: 'DSG', targetRank: 'MSgt', packageType: 'Standard' },
+            reviewer: { name: '', rank: '', unit: '' },
             service: { dor: '', payDate: '', tafmsYears: '', tafmsMonths: '', satYears: '', satMonths: '', epbDate: '', pafscLevel: '7', dafscLevel: '7' },
             stepFlags: { isSoleOccupant: false, priorStepToGrade: false, fmpRemarks: '' },
             readiness: { fitScore: '', fitDate: '', clearanceDate: '', adminHolds: { demotion: false, retirement: false, suspended: false } },
@@ -378,7 +407,7 @@
         }
 
         function formatYM(totalMonths) {
-            if (!totalMonths && totalMonths !== 0) return "N/A";
+            if (!totalMonths && totalMonths !== 0) return "0 Yrs 0 Mos";
             const yrs = Math.floor(totalMonths / 12);
             const mos = totalMonths % 12;
             return `${yrs} Yr${yrs !== 1 ? 's' : ''} ${mos} Mo${mos !== 1 ? 's' : ''}`;
@@ -436,14 +465,30 @@
         function openPrintPreview() {
             const warnings = sncoGetWarnings();
             const isErr = warnings.some(w => w.t === 'error');
+            
             document.getElementById('prev-name').innerText = sncoState.profile.name || "UNSPECIFIED";
             document.getElementById('prev-unit').innerText = sncoState.profile.unit || "UNSPECIFIED";
             document.getElementById('prev-rank').innerText = `${sncoState.profile.targetRank} (${sncoState.profile.packageType})`;
+            
             const statusEl = document.getElementById('prev-status');
             statusEl.innerText = isErr ? 'REJECTED' : 'VALIDATED';
             statusEl.className = `text-xs font-black ${isErr ? 'text-red-600' : 'text-blue-600'}`;
+
+            const revInfo = document.getElementById('prev-reviewer-info');
+            revInfo.innerText = `${sncoState.reviewer.name || '____________'}, ${sncoState.reviewer.rank || '____'}, ${sncoState.reviewer.unit || '____'}`;
+
             const auditList = document.getElementById('prev-audit-list');
-            auditList.innerHTML = warnings.length === 0 ? `<p class="text-[9px] font-bold text-green-600">FULLY COMPLIANT PACKAGE</p>` : warnings.map(w => `<div class="flex items-start gap-2 py-1"><span class="w-1 h-1 rounded-full mt-1.5 ${w.t === 'error' ? 'bg-red-600' : 'bg-orange-500'}"></span><p class="text-[9px]"><span class="font-black">${w.f}:</span> ${w.m}</p></div>`).join('');
+            if (warnings.length === 0) {
+                auditList.innerHTML = `<p class="text-[9px] font-bold text-green-600">FULLY COMPLIANT PACKAGE</p>`;
+            } else {
+                auditList.innerHTML = warnings.map(w => `
+                    <div class="flex items-start gap-2 py-1">
+                        <span class="w-1 h-1 rounded-full mt-1.5 ${w.t === 'error' ? 'bg-red-600' : 'bg-orange-500'}"></span>
+                        <p class="text-[9px]"><span class="font-black">${w.f}:</span> ${w.m}</p>
+                    </div>
+                `).join('');
+            }
+
             document.getElementById('print-modal').classList.remove('hidden');
         }
 
@@ -467,21 +512,51 @@
         function sncoGetWarnings() {
             const metrics = sncoGetMetrics();
             const s = standards[sncoState.profile.targetRank];
-            // FIXED RETRAINING LOGIC: Detects manually selected "Retraining" OR data mismatch
-            const isRetraining = (sncoState.profile.packageType === 'Retraining') || (parseInt(sncoState.service.pafscLevel) >= s.skill && parseInt(sncoState.service.dafscLevel) < s.skill);
             const isAGR = sncoState.profile.component === 'AGR';
+            const isRetraining = (sncoState.profile.packageType === 'Retraining') || (parseInt(sncoState.service.pafscLevel) >= s.skill && parseInt(sncoState.service.dafscLevel) < s.skill);
             const warnings = [];
 
             if (!sncoState.profile.name || !sncoState.profile.unit) warnings.push({ f: 'Incomplete', m: 'Candidate Name/Unit is required.', t: 'error' });
             if (isRetraining) warnings.push({ f: 'Retraining', m: 'Para 10.12 Retraining detected. SOU mandatory.', t: 'warning' });
-            if (metrics.sat < s.minTis) warnings.push({ f: 'Eligibility', m: `Needs ${s.tisLabel} Satisfactory Service. Current: ${formatYM(metrics.sat)}.`, t: 'error' });
+
+            const currentTisValue = isAGR ? metrics.tafms : metrics.sat;
+            const tisLabel = isAGR ? 'Active Service (TAFMS)' : 'Satisfactory Service (NGB 23)';
+            
+            if (currentTisValue < s.minTis) {
+                warnings.push({ f: 'Eligibility', m: `Needs ${s.tisLabel} ${tisLabel}. Current: ${formatYM(currentTisValue)}.`, t: 'error' });
+            }
+
             if (metrics.tig === null) warnings.push({ f: 'Incomplete', m: 'Date of Rank missing.', t: 'error' });
             else if (metrics.tig < 24 && !sncoState.profile.targetRank.startsWith('T')) warnings.push({ f: 'TIG', m: 'Needs 24 Mos TIG.', t: 'error' });
+            
             if (!sncoState.service.epbDate) warnings.push({ f: 'Incomplete', m: 'EPB Closeout Date required.', t: 'error' });
-            if (isAGR && !metrics.tafms) warnings.push({ f: 'TAFMS', m: 'AGR Active Duty service must be entered.', t: 'error' });
             if (!sncoState.readiness.fitScore) warnings.push({ f: 'Incomplete', m: 'Fitness data missing.', t: 'error' });
-            if (!sncoState.readiness.clearanceDate) warnings.push({ f: 'Security', m: 'Adjudication Date missing.', t: 'error' });
+            
+            if (!sncoState.readiness.clearanceDate) {
+                warnings.push({ f: 'Security', m: 'Adjudication Date missing.', t: 'error' });
+            } else if (metrics.clearanceAge >= 60) {
+                warnings.push({ f: 'Security', m: `Clearance is ${metrics.clearanceAge} months old (> 5 Yrs). Memo required.`, t: 'warning' });
+            }
+            
             if (!sncoState.board.compositionMet) warnings.push({ f: 'Board', m: 'Composition not verified.', t: 'error' });
+            
+            // CHECKLIST-INTEGRATED AUDIT LOGIC
+            const checklistItems = [
+                { id: 'ca26', l: 'CA ANG Form 26' },
+                { id: 'sou', l: 'Service SOU (Att 3)' },
+                { id: 'memo', l: 'Board Letter' },
+                { id: 'epb', l: 'EPB' },
+                { id: 'fit', l: 'Fitness Printout' },
+                { id: 'sec_clearance', l: 'Sec Clearance Memo' },
+                { id: 'retrain_sou', l: 'Retrain SOU', h: !isRetraining },
+                { id: 'first_sgt_sou', l: '1st Sgt SOU', h: !sncoState.isFirstSgt }
+            ];
+
+            checklistItems.forEach(item => {
+                if (!item.h && !sncoState.checklist[item.id]) {
+                    warnings.push({ f: 'Missing File', m: `Verification folder requires: ${item.l}.`, t: 'error' });
+                }
+            });
             
             return warnings;
         }
@@ -489,9 +564,8 @@
         function sncoRender() {
             const metrics = sncoGetMetrics();
             const s = standards[sncoState.profile.targetRank];
-            // FIXED RETRAINING LOGIC: Triggers on manual selection OR data mismatch
-            const isRetraining = (sncoState.profile.packageType === 'Retraining') || (parseInt(sncoState.service.pafscLevel) >= s.skill && parseInt(sncoState.service.dafscLevel) < s.skill);
             const isAGR = sncoState.profile.component === 'AGR';
+            const isRetraining = (sncoState.profile.packageType === 'Retraining') || (parseInt(sncoState.service.pafscLevel) >= s.skill && parseInt(sncoState.service.dafscLevel) < s.skill);
 
             document.querySelectorAll('.snco-step').forEach((el, i) => el.classList.toggle('hidden', i + 1 !== sncoState.currentStep));
             const stepper = document.getElementById('stepper-container');
@@ -549,6 +623,15 @@
                 verdictEl.innerText = isErr ? "FAIL" : "CAUTION";
             }
 
+            const clrInput = document.getElementById('clearance-input');
+            if (clrInput) {
+                if (metrics.clearanceAge >= 60) {
+                    clrInput.className = "guidance-trigger w-full border-2 rounded-xl p-3 font-bold outline-none bg-orange-50 border-orange-400 text-orange-900 shadow-inner";
+                } else {
+                    clrInput.className = "guidance-trigger w-full border-2 rounded-xl p-3 font-bold outline-none bg-slate-50 border-slate-200";
+                }
+            }
+
             document.getElementById('prev-btn').disabled = sncoState.currentStep === 1;
             const sgtBtn = document.getElementById('first-sgt-btn');
             sgtBtn.innerText = `1st Sgt Mode: ${sncoState.isFirstSgt ? 'ACTIVE' : 'OFF'}`;
@@ -568,6 +651,10 @@
                 listEl.innerHTML = items.filter(i=>!i.h).map(i=>`<div onclick="sncoToggleCheck('${i.id}')" class="p-3 rounded-2xl border-2 flex items-center justify-between cursor-pointer transition-all ${sncoState.checklist[i.id]?'bg-blue-600 border-blue-600 text-white':'bg-white border-slate-100'}"><span class="text-[10px] font-black uppercase tracking-tight">${i.l}</span>${sncoState.checklist[i.id]?'<i data-lucide="check-circle-2" class="w-4 h-4 text-white"></i>':'<div class="w-4 h-4 rounded-full border-2 border-slate-200"></div>'}</div>`).join('');
                 document.getElementById('board-req-text').innerText = sncoState.profile.packageType.startsWith('STEP') ? s.stepComposition : s.composition;
                 document.getElementById('board-comp-checkbox').checked = sncoState.board.compositionMet;
+                
+                document.getElementById('rev-name').value = sncoState.reviewer.name;
+                document.getElementById('rev-rank').value = sncoState.reviewer.rank;
+                document.getElementById('rev-unit').value = sncoState.reviewer.unit;
             }
             lucide.createIcons();
         }
