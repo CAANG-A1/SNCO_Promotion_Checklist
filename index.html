@@ -290,14 +290,16 @@
                             <div class="lg:col-span-8 space-y-6">
                                 <h3 class="font-black text-xs uppercase text-blue-600 flex items-center gap-3"><i data-lucide="clipboard-list" class="w-5 h-5"></i> Verification Check</h3>
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <div class="p-4 bg-white rounded-3xl border border-slate-200 shadow-sm flex items-center justify-between cursor-pointer" onclick="sncoToggleComposition()">
+                                    <!-- BOARD COMPOSITION BOX -->
+                                    <div class="p-4 bg-white rounded-3xl border border-slate-200 shadow-sm flex items-center justify-between cursor-pointer h-16" onclick="sncoToggleComposition()">
                                         <div class="space-y-1">
                                             <p class="text-[9px] font-black uppercase text-slate-700 tracking-tighter">Board Composition OK?</p>
                                             <p id="board-req-text" class="text-[8px] text-slate-400 italic font-medium leading-none"></p>
                                         </div>
                                         <input type="checkbox" id="board-comp-checkbox" class="w-5 h-5 rounded text-blue-600 pointer-events-none">
                                     </div>
-                                    <div id="folder-checklist" class="space-y-2 col-span-2 grid grid-cols-2 gap-2"></div>
+                                    <!-- DYNAMIC CHECKLIST -->
+                                    <div id="folder-checklist" class="col-span-2 grid grid-cols-1 md:grid-cols-2 gap-2"></div>
                                 </div>
                             </div>
                         </div>
@@ -540,7 +542,6 @@
             
             if (!sncoState.board.compositionMet) warnings.push({ f: 'Board', m: 'Composition not verified.', t: 'error' });
             
-            // CHECKLIST-INTEGRATED AUDIT LOGIC
             const checklistItems = [
                 { id: 'ca26', l: 'CA ANG Form 26' },
                 { id: 'sou', l: 'Service SOU (Att 3)' },
@@ -648,7 +649,14 @@
             if (sncoState.currentStep === 4) {
                 const listEl = document.getElementById('folder-checklist');
                 const items = [{id:'ca26',l:'CA ANG Form 26'},{id:'sou',l:'Service SOU (Att 3)'},{id:'memo',l:'Board Letter'},{id:'epb',l:'EPB'},{id:'fit',l:'Fitness Printout'},{id:'sec_clearance',l:'Sec Clearance Memo'},{id:'retrain_sou',l:'Retrain SOU',h:!isRetraining},{id:'first_sgt_sou',l:'1st Sgt SOU',h:!sncoState.isFirstSgt}];
-                listEl.innerHTML = items.filter(i=>!i.h).map(i=>`<div onclick="sncoToggleCheck('${i.id}')" class="p-3 rounded-2xl border-2 flex items-center justify-between cursor-pointer transition-all ${sncoState.checklist[i.id]?'bg-blue-600 border-blue-600 text-white':'bg-white border-slate-100'}"><span class="text-[10px] font-black uppercase tracking-tight">${i.l}</span>${sncoState.checklist[i.id]?'<i data-lucide="check-circle-2" class="w-4 h-4 text-white"></i>':'<div class="w-4 h-4 rounded-full border-2 border-slate-200"></div>'}</div>`).join('');
+                
+                // STANDARDIZED BOX SIZE: Added h-16 and uniform structure
+                listEl.innerHTML = items.filter(i=>!i.h).map(i=>`
+                    <div onclick="sncoToggleCheck('${i.id}')" class="h-16 p-3 rounded-2xl border-2 flex items-center justify-between cursor-pointer transition-all ${sncoState.checklist[i.id]?'bg-blue-600 border-blue-600 text-white':'bg-white border-slate-100'}">
+                        <span class="text-[9px] font-black uppercase tracking-tight leading-tight pr-2">${i.l}</span>
+                        ${sncoState.checklist[i.id]?'<i data-lucide="check-circle-2" class="w-4 h-4 text-white shrink-0"></i>':'<div class="w-4 h-4 rounded-full border-2 border-slate-200 shrink-0"></div>'}
+                    </div>`).join('');
+                
                 document.getElementById('board-req-text').innerText = sncoState.profile.packageType.startsWith('STEP') ? s.stepComposition : s.composition;
                 document.getElementById('board-comp-checkbox').checked = sncoState.board.compositionMet;
                 
