@@ -67,6 +67,7 @@
                 </div>
             </div>
             <div class="flex-1 overflow-y-auto p-12 bg-slate-200/50 flex justify-center custom-scrollbar">
+                <!-- PREVIEW PAPER -->
                 <div class="bg-white w-[8.5in] min-h-[11in] shadow-2xl p-16 space-y-12 uppercase text-slate-900">
                     <div class="text-center border-b-4 border-slate-900 pb-8">
                         <h2 class="text-3xl font-black italic tracking-tighter underline decoration-blue-600 underline-offset-8">Promotion Certification</h2>
@@ -220,8 +221,8 @@
                                     <input type="date" id="service-dor" oninput="sncoUpdateField('service', 'dor', this.value)" class="guidance-trigger w-full bg-slate-50 border border-slate-200 rounded-2xl p-3 text-sm font-bold outline-none">
                                 </div>
                                 <div class="space-y-1">
-                                    <label class="text-[10px] font-black text-blue-600 uppercase tracking-widest italic block mb-1">Latest EPB Closeout Date</label>
-                                    <input type="date" id="service-epbDate" oninput="sncoUpdateField('service', 'epbDate', this.value)" class="guidance-trigger w-full bg-blue-50 border border-blue-100 rounded-2xl p-3 text-sm font-bold outline-none">
+                                    <label id="epb-label" class="text-[10px] font-black text-slate-400 uppercase tracking-widest italic block mb-1">Latest EPB Closeout Date</label>
+                                    <input type="date" id="service-epbDate" oninput="sncoUpdateField('service', 'epbDate', this.value)" class="guidance-trigger w-full bg-blue-50 border border-blue-100 rounded-2xl p-3 text-sm font-bold outline-none transition-all">
                                 </div>
 
                                 <div class="bg-slate-900 rounded-[32px] p-6 space-y-4 shadow-xl">
@@ -346,7 +347,6 @@
                         <div class="border-b border-slate-100 pb-4">
                             <h2 class="text-2xl font-black tracking-tight uppercase tracking-tighter italic leading-none">4. Verification & Reviewer Profile</h2>
                         </div>
-                        
                         <div class="space-y-8">
                             <div class="bg-slate-50 p-8 rounded-[40px] border border-slate-200 shadow-inner space-y-6">
                                 <h3 class="font-black text-xs uppercase text-blue-600 flex items-center gap-3">
@@ -402,7 +402,7 @@
                     </button>
                     <div class="flex gap-4">
                         <button id="first-sgt-btn" onclick="sncoToggleFirstSgt()" class="px-4 py-2 rounded-xl text-[10px] font-black uppercase border-2 transition-all"></button>
-                        <button id="next-btn" onclick="sncoChangeStep(1)" class="px-10 py-3 bg-blue-600 text-white rounded-xl text-xs font-black shadow-lg hover:bg-blue-700 transition-all uppercase tracking-widest">Continue <i data-lucide="chevron-right" class="inline-block w-4 h-4 ml-1"></i></button>
+                        <button id="next-btn" onclick="sncoChangeStep(1)" class="px-10 py-3 bg-blue-600 text-white rounded-xl text-xs font-black shadow-lg hover:bg-blue-700 transition-all uppercase tracking-widest">Continue <i data-lucide="chevron-right" class="inline-block w-4 h-4 mr-1"></i></button>
                         <div id="final-status-badge" class="hidden px-10 py-3 rounded-xl font-black text-xs uppercase tracking-widest shadow-lg transition-all"></div>
                     </div>
                 </div>
@@ -433,7 +433,7 @@
             'prof-package': "Standard: Vacancy. STEP: Accelerated.",
             'service-payDate': "Pay Entry Base Date (PEBD).",
             'service-dor': "Current Date of Rank.",
-            'service-epbDate': "Latest EPB Closeout Date.",
+            'service-epbDate': "Latest EPB Closeout Date. AGR requires 12 months; others require 24 months.",
             'service-yrs-input': "Satisfactory Service (NGB 23) or TAFMS (AGR).",
             'readiness-submissionDate': "Submission Date to HQ. Fitness must remain current through the end of the following month.",
             'readiness-fitScore': "Current PFA Score (Must be ≥ 75).",
@@ -559,17 +559,19 @@
         function sncoGetMetrics() {
             const tis = calcMonths(sncoState.service.payDate);
             const tig = calcMonths(sncoState.service.dor);
+            const epbAge = calcMonths(sncoState.service.epbDate);
             const clAge = calcMonths(sncoState.readiness.clearanceDate);
             const tafms = (parseInt(sncoState.service.tafmsYears) || 0) * 12 + (parseInt(sncoState.service.tafmsMonths) || 0);
             const sat = (parseInt(sncoState.service.satYears) || 0) * 12 + (parseInt(sncoState.service.satMonths) || 0);
             const fitTgt = getEndOfFollowingMonth(sncoState.readiness.submissionDate);
             const fitAct = sncoState.readiness.fitExpirationDate ? new Date(sncoState.readiness.fitExpirationDate + 'T00:00:00') : null;
-            return { tis, tig, clAge, tafms, sat, fitTgt, fitAct };
+            return { tis, tig, clAge, tafms, sat, fitTgt, fitAct, epbAge };
         }
 
         function sncoGetWarnings() {
             const m = sncoGetMetrics();
             const s = standards[sncoState.profile.targetRank];
+            const isAGR = sncoState.profile.component === 'AGR';
             
             const pSkill = parseInt(sncoState.service.pafscLevel);
             const dSkill = parseInt(sncoState.service.dafscLevel);
@@ -601,11 +603,25 @@
                 }
             });
 
-            const tisVal = sncoState.profile.component === 'AGR' ? m.tafms : m.sat;
-            if (tisVal < s.minTis) w.push({ f: 'Eligibility', m: `Needs ${s.tisLabel} service.`, t: 'error' });
+            const tisVal = isAGR ? m.tafms : m.sat;
+            const tisTerm = isAGR ? 'TAFMS' : 'Satisfactory Service'; // FIXED TERMINOLOGY
+            
+            if (tisVal < s.minTis) {
+                w.push({ f: 'Eligibility', m: `Needs ${s.tisLabel} ${tisTerm}.`, t: 'error' });
+            }
+
             if (m.tig === null) w.push({ f: 'Incomplete', m: 'DOR missing.', t: 'error' });
             else if (m.tig < 24 && !sncoState.profile.targetRank.startsWith('T')) w.push({ f: 'TIG', m: 'Needs 24 Mos.', t: 'error' });
             
+            if (m.epbAge === null) {
+                w.push({ f: 'Incomplete', m: 'EPB Closeout Date required.', t: 'error' });
+            } else {
+                const epbLimit = isAGR ? 12 : 24;
+                if (m.epbAge > epbLimit) {
+                    w.push({ f: 'EPB', m: `Out of Cycle: EPB is over ${isAGR ? '1 Yr' : '2 Yrs'} old.`, t: 'error' });
+                }
+            }
+
             if (sncoState.readiness.fitStatus === 'Failing') w.push({ f: 'Ineligible', m: 'Hard Stop: Fitness Failing.', t: 'error' });
             if (m.fitTgt && m.fitAct && m.fitAct < m.fitTgt) w.push({ f: 'Fitness', m: 'Fails processing currency window.', t: 'error' });
             
@@ -649,11 +665,24 @@
             if (el('tis-label')) el('tis-label').innerText = `Pay Entry Date (Pay Age: ${m.tis !== null ? formatYM(m.tis) : 'N/A'})`;
             if (el('tig-label')) el('tig-label').innerText = `Date of Rank (TIG: ${m.tig !== null ? formatYM(m.tig) : 'N/A'})`;
             
-            // PROGRAMMATIC RETRAINING ALERT
             if (el('logic-alerts')) el('logic-alerts').classList.toggle('hidden', !isRetrain);
 
-            // GRADE-SPECIFIC REQS
             if (el('slot-req-badge')) el('slot-req-badge').innerText = `${reqSkill}-Level Slot Requirement`;
+
+            const epbInput = el('service-epbDate');
+            const epbLabel = el('epb-label');
+            if (epbInput && epbLabel) {
+                const limit = isAGR ? 12 : 24;
+                if (m.epbAge !== null && m.epbAge > limit) {
+                    epbInput.className = "guidance-trigger w-full border-2 rounded-xl p-3 text-sm font-bold outline-none bg-red-50 border-red-400 text-red-900 shadow-inner";
+                    epbLabel.className = "text-[10px] font-black text-red-500 uppercase tracking-widest block mb-1";
+                    epbLabel.innerText = `EPB OUT OF CYCLE (> ${isAGR ? '1 Yr' : '2 Yrs'})`;
+                } else {
+                    epbInput.className = "guidance-trigger w-full border-2 rounded-xl p-3 text-sm font-bold outline-none bg-blue-50 border-blue-100";
+                    epbLabel.className = "text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1";
+                    epbLabel.innerText = "Latest EPB Closeout Date";
+                }
+            }
 
             if (el('row-ncoa')) el('row-ncoa').classList.toggle('hidden', sncoState.profile.targetRank !== 'MSgt');
             if (el('row-sncoa')) el('row-sncoa').classList.toggle('hidden', !['SMSgt', 'CMSgt'].includes(sncoState.profile.targetRank));
@@ -665,70 +694,72 @@
             if (el('flag-degree')) el('flag-degree').checked = sncoState.service.degreeComplete;
             if (el('component-toggle')) el('component-toggle').innerHTML = ['DSG', 'AGR', 'Technician', 'Statutory Tour'].map(c => `<button onclick="sncoUpdateField('profile', 'component', '${c}')" class="flex-1 py-3 text-[10px] font-black rounded-lg transition-all ${sncoState.profile.component === c ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-500 hover:bg-white/50'}">${c}</button>`).join('');
 
-            const yrs = el('service-yrs-input');
-            const mos = el('service-mos-input');
-            const sum = el('service-summary-value');
-            const typ = el('service-type-label');
+            const yrsInput = el('service-yrs-input');
+            const mosInput = el('service-mos-input');
+            const summaryVal = el('service-summary-value');
+            const typeLabel = el('service-type-label');
             const box = el('tafms-container');
 
-            if (box && yrs && mos && sum && typ) {
+            if (box && yrsInput && mosInput && summaryVal && typeLabel) {
                 if (isAGR) {
                     box.className = "p-6 rounded-[32px] space-y-4 shadow-xl bg-slate-900 border-blue-500/30 text-white transition-all";
-                    typ.innerText = "AGR ACTIVE SERVICE (TAFMS)";
-                    sum.innerText = formatYM(m.tafms);
-                    yrs.className = "guidance-trigger w-full rounded-xl p-3 text-xl font-black outline-none bg-slate-800 border-slate-700 text-white";
-                    mos.className = "guidance-trigger w-full rounded-xl p-3 text-xl font-black outline-none bg-slate-800 border-slate-700 text-white";
-                    if (document.activeElement !== yrs) yrs.value = sncoState.service.tafmsYears;
-                    if (document.activeElement !== mos) mos.value = sncoState.service.tafmsMonths;
+                    typeLabel.innerText = "AGR ACTIVE SERVICE (TAFMS)";
+                    summaryVal.innerText = formatYM(m.tafms);
+                    yrsInput.className = "guidance-trigger w-full rounded-xl p-3 text-xl font-black outline-none bg-slate-800 border-slate-700 text-white";
+                    mosInput.className = "guidance-trigger w-full rounded-xl p-3 text-xl font-black outline-none bg-slate-800 border-slate-700 text-white";
+                    if (document.activeElement !== yrsInput) yrsInput.value = sncoState.service.tafmsYears;
+                    if (document.activeElement !== mosInput) mosInput.value = sncoState.service.tafmsMonths;
                 } else {
                     box.className = "p-6 rounded-[32px] space-y-4 shadow-xl bg-white border-slate-200 text-slate-900 transition-all";
-                    typ.innerText = "SATISFACTORY SERVICE (NGB 23)";
-                    sum.innerText = formatYM(m.sat);
-                    yrs.className = "guidance-trigger w-full rounded-xl p-3 text-xl font-black outline-none bg-slate-50 border-slate-200 text-slate-900 focus:bg-white focus:border-blue-500";
-                    mos.className = "guidance-trigger w-full rounded-xl p-3 text-xl font-black outline-none bg-slate-50 border-slate-200 text-slate-900 focus:bg-white focus:border-blue-500";
-                    if (document.activeElement !== yrs) yrs.value = sncoState.service.satYears;
-                    if (document.activeElement !== mos) mos.value = sncoState.service.satMonths;
+                    typeLabel.innerText = "SATISFACTORY SERVICE (NGB 23)";
+                    summaryVal.innerText = formatYM(m.sat);
+                    yrsInput.className = "guidance-trigger w-full rounded-xl p-3 text-xl font-black outline-none bg-slate-50 border-slate-200 text-slate-900 focus:bg-white focus:border-blue-500";
+                    mosInput.className = "guidance-trigger w-full rounded-xl p-3 text-xl font-black outline-none bg-slate-50 border-slate-200 text-slate-900 focus:bg-white focus:border-blue-500";
+                    if (document.activeElement !== yrsInput) yrsInput.value = sncoState.service.satYears;
+                    if (document.activeElement !== mosInput) mosInput.value = sncoState.service.satMonths;
                 }
             }
 
             if (el('admin-flags')) el('admin-flags').innerHTML = ['demotion', 'retirement', 'suspended'].map(id => `<div class="flex items-center justify-between"><span class="text-xs font-bold text-slate-700 capitalize">${id.replace('suspended', 'Legal/Hold')}?</span><button onclick="sncoToggleAdminHold('${id}')" class="w-12 h-6 rounded-full relative transition-all ${sncoState.readiness.adminHolds[id] ? 'bg-red-600' : 'bg-slate-300'}"><div class="absolute top-1 w-4 h-4 bg-white rounded-full transition-all ${sncoState.readiness.adminHolds[id] ? 'left-7' : 'left-1'}"></div></button></div>`).join('');
 
-            const audit = el('audit-results');
+            const auditEl = el('audit-results');
             const summaryCard = el('audit-summary-card');
-            const verdict = el('audit-summary-verdict');
+            const verdictEl = el('audit-summary-verdict');
             const w = sncoGetWarnings();
             const isErr = w.some(item => item.t === 'error');
 
-            if (audit && summaryCard && verdict) {
+            if (auditEl && summaryCard && verdictEl) {
                 if (w.length === 0) {
-                    audit.innerHTML = `<div class="flex-1 flex flex-col items-center justify-center py-10 text-center animate-in fade-in"><div class="w-16 h-16 bg-green-50 rounded-full flex items-center justify-center mb-4 shadow-inner ring-4 ring-green-50/50"><i data-lucide="check-circle-2" class="w-8 h-8 text-green-600"></i></div><p class="text-[11px] font-black text-green-900 uppercase italic tracking-widest">Compliant Record</p></div>`;
+                    auditEl.innerHTML = `<div class="flex-1 flex flex-col items-center justify-center py-10 text-center animate-in fade-in"><div class="w-16 h-16 bg-green-50 rounded-full flex items-center justify-center mb-4 shadow-inner ring-4 ring-green-50/50"><i data-lucide="check-circle-2" class="w-8 h-8 text-green-600"></i></div><p class="text-[11px] font-black text-green-900 uppercase italic tracking-widest">Compliant Record</p></div>`;
                     summaryCard.className = "mt-6 p-6 rounded-3xl border-2 bg-green-50 border-green-200 text-green-900 shrink-0";
-                    verdict.innerText = "PASS";
+                    verdictEl.innerText = "PASS";
                 } else {
-                    audit.innerHTML = w.map(item => `<div class="p-4 rounded-2xl border flex gap-3 items-start animate-in zoom-in-95 ${item.t === 'error' ? 'bg-red-50 border-red-100 text-red-700' : 'bg-orange-50 border-orange-100 text-orange-700'}"><i data-lucide="${item.t === 'error' ? 'shield-alert' : 'alert-circle'}" class="w-5 h-5 mt-0.5 shrink-0"></i><div><p class="text-[9px] font-black uppercase opacity-60 tracking-widest leading-none">${item.f}</p><p class="text-[10px] font-bold leading-tight">${item.m}</p></div></div>`).join('');
+                    auditEl.innerHTML = w.map(item => `<div class="p-4 rounded-2xl border flex gap-3 items-start animate-in zoom-in-95 ${item.t === 'error' ? 'bg-red-50 border-red-100 text-red-700' : 'bg-orange-50 border-orange-100 text-orange-700'}"><i data-lucide="${item.t === 'error' ? 'shield-alert' : 'alert-circle'}" class="w-5 h-5 mt-0.5 shrink-0"></i><div><p class="text-[9px] font-black uppercase opacity-60 tracking-widest leading-none">${item.f}</p><p class="text-[10px] font-bold leading-tight">${item.m}</p></div></div>`).join('');
                     summaryCard.className = `mt-6 p-6 rounded-3xl border-2 shrink-0 ${isErr ? 'bg-red-50 border-red-200 text-red-900' : 'bg-orange-50 border-orange-200 text-orange-900'}`;
-                    verdict.innerText = isErr ? "FAIL" : "CAUTION";
+                    verdictEl.innerText = isErr ? "FAIL" : "CAUTION";
                 }
             }
 
-            const fitExp = el('readiness-fitExpirationDate');
-            const fitLbl = el('fit-exp-label');
-            const tgtLbl = el('fit-currency-target');
-            if (fitExp && fitLbl && tgtLbl) {
+            const fitExpInput = el('readiness-fitExpirationDate');
+            const fitStatusLabel = el('fit-exp-label');
+            const currencyTarget = el('fit-currency-target');
+            if (fitExpInput && fitStatusLabel && currencyTarget) {
                 if (m.fitTgt) {
                     const tgtStr = m.fitTgt.toLocaleDateString('en-US', {month:'long', day:'numeric', year:'numeric'});
-                    tgtLbl.innerText = `Required currency through: ${tgtStr}`;
-                    tgtLbl.className = "text-[11px] font-black text-blue-600";
+                    currencyTarget.innerText = `Required currency through: ${tgtStr}`;
+                    currencyTarget.className = "text-[11px] font-black text-blue-600";
                     if (m.fitAct && m.fitAct < m.fitTgt) {
-                        fitExp.className = "guidance-trigger w-full border-2 rounded-xl p-3 font-bold outline-none bg-red-50 border-red-400 text-red-900 shadow-inner";
-                        fitLbl.className = "text-[10px] font-black text-red-500 uppercase tracking-widest block mb-1";
+                        fitExpInput.className = "guidance-trigger w-full border-2 rounded-xl p-3 font-bold outline-none bg-red-50 border-red-400 text-red-900 shadow-inner";
+                        fitStatusLabel.innerText = "Error: Fails CA Policy Window";
+                        fitStatusLabel.className = "text-[10px] font-black text-red-500 uppercase tracking-widest block mb-1";
                     } else {
-                        fitExp.className = "guidance-trigger w-full border-2 rounded-xl p-3 font-bold outline-none bg-slate-50 border-slate-200";
-                        fitLbl.className = "text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1";
+                        fitExpInput.className = "guidance-trigger w-full border-2 rounded-xl p-3 font-bold outline-none bg-slate-50 border-slate-200";
+                        fitStatusLabel.innerText = "Fitness Expiration Date";
+                        fitStatusLabel.className = "text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1";
                     }
                 } else {
-                    tgtLbl.innerText = "Enter HQ Submission Date in Step 1...";
-                    tgtLbl.className = "text-[11px] font-bold text-slate-400 italic";
+                    currencyTarget.innerText = "Enter HQ Submission Date in Step 1...";
+                    currencyTarget.className = "text-[11px] font-bold text-slate-400 italic";
                 }
             }
 
@@ -769,7 +800,6 @@
                 if (el('rev-unit')) el('rev-unit').value = sncoState.reviewer.unit;
                 if (el('rev-comments')) el('rev-comments').value = sncoState.reviewer.comments;
                 
-                // Final Sync of Step 2 selects if they changed due to target rank
                 if (el('service-pafsc')) el('service-pafsc').value = sncoState.service.pafscLevel;
                 if (el('service-dafsc')) el('service-dafsc').value = sncoState.service.dafscLevel;
             }
