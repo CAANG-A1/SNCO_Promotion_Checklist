@@ -67,6 +67,7 @@
                 </div>
             </div>
             <div class="flex-1 overflow-y-auto p-12 bg-slate-200/50 flex justify-center custom-scrollbar">
+                <!-- PREVIEW PAPER -->
                 <div class="bg-white w-[8.5in] min-h-[11in] shadow-2xl p-16 pb-32 space-y-12 uppercase text-slate-900 flex flex-col">
                     <div class="text-center border-b-4 border-slate-900 pb-8 shrink-0">
                         <h2 class="text-3xl font-black italic tracking-tighter underline decoration-blue-600 underline-offset-8">Promotion Certification</h2>
@@ -252,7 +253,8 @@
                                 </div>
                             </div>
                             <div class="space-y-4">
-                                <div id="tafms-container" class="p-6 rounded-[32px] space-y-4 shadow-xl border-2 transition-all">
+                                <!-- SERVICE BOX (TAFMS/SAT) -->
+                                <div id="tafms-container" class="p-6 rounded-[32px] space-y-4 shadow-xl border-2 transition-all min-h-[140px]">
                                     <div class="flex justify-between items-center border-b border-white/10 pb-2">
                                         <span id="service-type-label" class="text-[9px] font-black uppercase"></span>
                                         <span id="service-summary-value" class="font-black text-xs"></span>
@@ -268,6 +270,7 @@
                                         </div>
                                     </div>
                                 </div>
+
                                 <div class="p-6 bg-slate-50 rounded-[32px] border border-slate-200 space-y-4 shadow-inner">
                                     <div class="flex justify-between items-center border-b pb-2">
                                         <h3 class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Skill Level Audit</h3>
@@ -277,13 +280,13 @@
                                         <div class="space-y-1">
                                             <label class="text-[9px] font-bold text-slate-500 uppercase">Awarded PAFSC Level</label>
                                             <select id="service-pafsc" onchange="sncoUpdateField('service', 'pafscLevel', this.value)" class="w-full bg-white border border-slate-200 rounded-xl p-3 text-xs font-black">
-                                                <option value="1">1 (Helper)</option><option value="3">3 (Apprentice)</option><option value="5">5 (Journeyman)</option><option value="7" selected>7 (Craftsman)</option><option value="9">9 (Superintendent)</option>
+                                                <option value="1">1</option><option value="3">3</option><option value="5">5</option><option value="7" selected>7</option><option value="9">9</option>
                                             </select>
                                         </div>
                                         <div class="space-y-1">
-                                            <label class="text-[9px] font-bold text-slate-500 uppercase">Skill Level in Current Duty (DAFSC)</label>
+                                            <label class="text-[9px] font-bold text-slate-500 uppercase">Current Duty (DAFSC) Level</label>
                                             <select id="service-dafsc" onchange="sncoUpdateField('service', 'dafscLevel', this.value)" class="w-full bg-white border border-slate-200 rounded-xl p-3 text-xs font-black">
-                                                <option value="1">1 (Helper)</option><option value="3">3 (Apprentice)</option><option value="5">5 (Journeyman)</option><option value="7" selected>7 (Craftsman)</option><option value="9">9 (Superintendent)</option>
+                                                <option value="1">1</option><option value="3">3</option><option value="5">5</option><option value="7" selected>7</option><option value="9">9</option>
                                             </select>
                                         </div>
                                     </div>
@@ -392,7 +395,6 @@
                     </div>
                 </div>
 
-                <!-- NAVIGATION FOOTER -->
                 <div class="bg-slate-50 p-6 border-t border-slate-100 flex justify-between items-center">
                     <button id="prev-btn" onclick="sncoChangeStep(-1)" class="px-8 py-3 text-xs font-black text-slate-400 uppercase tracking-widest hover:text-slate-600 transition-colors">
                         <i data-lucide="chevron-left" class="inline-block w-4 h-4 mr-1"></i> Back
@@ -405,7 +407,6 @@
                 </div>
             </div>
 
-            <!-- SIDEBAR AUDIT -->
             <div class="lg:col-span-4 flex flex-col h-full">
                 <div class="bg-white rounded-[40px] p-8 border border-slate-200 shadow-sm flex-1 flex flex-col max-h-[850px] sticky top-8">
                     <div class="flex items-center gap-2 mb-6 border-b border-slate-50 pb-4">
@@ -473,6 +474,7 @@
         function getEndOfFollowingMonth(dateString) {
             if (!dateString) return null;
             const date = new Date(dateString + 'T00:00:00');
+            if (isNaN(date.getTime())) return null;
             date.setMonth(date.getMonth() + 2);
             date.setDate(0);
             return date;
@@ -495,7 +497,7 @@
                 }
             };
             const hide = () => { popup.classList.remove('opacity-100'); popup.style.transform = 'translateY(10px)'; };
-            document.addEventListener('focusin', (e) => { if(e && e.target && e.target.classList && e.target.classList.contains('guidance-trigger')) show(e.target); });
+            document.addEventListener('focusin', (e) => { if(e.target && e.target.classList && e.target.classList.contains('guidance-trigger')) show(e.target); });
             document.addEventListener('mouseover', (e) => {
                 const trigger = e.target.closest('.guidance-trigger');
                 if (trigger) show(trigger);
@@ -611,40 +613,69 @@
             const pSkill = parseInt(sncoState.service.pafscLevel);
             const dSkill = parseInt(sncoState.service.dafscLevel);
             const isRetrain = (pSkill >= s.skill && dSkill < s.skill);
-            const isStep = sncoState.profile.packageType.startsWith('STEP');
+            const isStep = (sncoState.profile.packageType || "").startsWith('STEP');
             const isStepII = sncoState.profile.packageType === 'STEP_II';
             const isE8E9 = ['SMSgt', 'CMSgt'].includes(sncoState.profile.targetRank);
+            
             const w = [];
 
             if (!sncoState.profile.name || !sncoState.profile.unit) w.push({ f: 'Incomplete', m: 'Name/Unit required.', t: 'error' });
-            if (pSkill < s.skill) w.push({ f: 'Skill Level', m: `Ineligible: PAFSC < ${s.skill}.`, t: 'error' });
             
+            if (pSkill < s.skill) {
+                w.push({ f: 'Skill Level', m: `Ineligible: Member must hold at least a ${s.skill}-level PAFSC.`, t: 'error' });
+            }
+
             if (isRetrain) {
                 w.push({ f: 'Retraining', m: 'Retraining detected. SOU mandatory.', t: 'warning' });
-                if (dSkill < 3) w.push({ f: 'Hard Stop', m: 'Ineligible: Needs 3-level in Duty.', t: 'error' });
+                if (dSkill < 3) {
+                    w.push({ f: 'Hard Stop', m: 'Ineligible: Needs 3-level in current Duty.', t: 'error' });
+                }
             }
+
             Object.entries(sncoState.readiness.adminHolds).forEach(([id, active]) => {
-                if (active) w.push({ f: 'Hard Stop', m: `Member in ${id} status.`, t: 'error' });
+                if (active) w.push({ f: 'Hard Stop', m: `Member in ${id} status. Prohibited.`, t: 'error' });
             });
+
             const tisVal = isAGR ? m.tafms : m.sat;
             const term = isAGR ? 'TAFMS' : 'Satisfactory Service';
             if (tisVal < s.minTis) w.push({ f: 'Eligibility', m: `Needs ${s.tisLabel} ${term}.`, t: 'error' });
             if (m.tig === null) w.push({ f: 'Incomplete', m: 'DOR missing.', t: 'error' });
             else if (m.tig < 24 && !sncoState.profile.targetRank.startsWith('T')) w.push({ f: 'TIG', m: 'Needs 24 Mos.', t: 'error' });
-            if (m.epbAge === null) w.push({ f: 'Incomplete', m: 'EPB missing.', t: 'error' });
-            else { if (m.epbAge > (isAGR ? 12 : 24)) w.push({ f: 'EPB', m: 'Out of Cycle.', t: 'error' }); }
+            
+            if (m.epbAge === null) {
+                w.push({ f: 'Incomplete', m: 'EPB Closeout Date required.', t: 'error' });
+            } else {
+                if (m.epbAge > (isAGR ? 12 : 24)) w.push({ f: 'EPB', m: `Out of Cycle (> ${isAGR ? '1 Yr' : '2 Yrs'}).`, t: 'error' });
+            }
+
             if (sncoState.readiness.fitStatus === 'Failing') w.push({ f: 'Ineligible', m: 'Fitness Failing.', t: 'error' });
             if (sncoState.readiness.fitStatus === 'Pregnancy') w.push({ f: 'Fitness', m: 'Pregnancy exemption active.', t: 'warning' });
-            if (m.fitTgt && m.fitAct && m.fitAct < m.fitTgt) w.push({ f: 'Fitness', m: 'Currency error.', t: 'error' });
             
-            if (!sncoState.readiness.clearanceDate) w.push({ f: 'Security', m: 'Adjudication missing.', t: 'error' });
-            else if (m.clAge >= 60) w.push({ f: 'Security', m: 'Over 5 Yrs old.', t: 'warning' });
+            if (m.fitTgt && m.fitAct && m.fitAct < m.fitTgt) w.push({ f: 'Fitness', m: 'Currency fails HQ window.', t: 'error' });
             
-            if (s.pme) s.pme.forEach(pme => { if (!sncoState.service.pmeComplete[pme]) w.push({ f: 'PME', m: `Requires ${pme}.`, t: 'error' }); });
+            if (!sncoState.readiness.clearanceDate) {
+                w.push({ f: 'Security', m: 'Adjudication missing.', t: 'error' });
+            } else if (m.clAge >= 60) {
+                w.push({ f: 'Security', m: 'Adjudication over 5 Yrs old. Validity memo required.', t: 'warning' });
+            }
+            
+            if (s.pme) s.pme.forEach(pme => { if (!sncoState.service.pmeComplete[pme]) w.push({ f: 'PME', m: `Requires ${pme} completion.`, t: 'error' }); });
             if (s.degree && !sncoState.service.degreeComplete) w.push({ f: 'Education', m: 'Requires CCAF.', t: 'error' });
             if (!sncoState.board.compositionMet) w.push({ f: 'Board', m: 'Not verified.', t: 'error' });
             
-            const checks = [{id:'ca26',l:'CA ANG Form 26'},{id:'sou',l:'Service SOU'},{id:'memo',l:'Board Letter'},{id:'epb',l:'EPB'},{id:'fit',l:'Fitness Printout'},{id:'sec_clearance',l:'Sec Clearance Memo'},{id:'retrain_sou',l:'Retrain SOU',h:!isRetrain},{id:'first_sgt_sou',l:'1st Sgt SOU',h:!sncoState.isFirstSgt},{id:'af1206',l:'AF Form 1206',h:!isStep},{id:'bio',l:'Biography',h:!(isStep || isE8E9)},{id:'step2_sou',l:'STEP II SOU (Att 8)',h:!isStepII}];
+            const checks = [
+                {id:'ca26',l:'CA ANG Form 26'},
+                {id:'sou',l:'Service SOU (Att 3)'},
+                {id:'memo',l:'Board Letter'},
+                {id:'epb',l:'EPB'},
+                {id:'fit',l:'Fitness Printout'},
+                {id:'sec_clearance',l:'Sec Clearance Memo'},
+                {id:'retrain_sou',l:'Retrain SOU',h:!isRetrain},
+                {id:'first_sgt_sou',l:'1st Sgt SOU',h:!sncoState.isFirstSgt},
+                {id:'af1206',l:'AF Form 1206',h:!isStep},
+                {id:'bio',l:'Biography',h:!(isStep || isE8E9)},
+                {id:'step2_sou',l:'STEP II SOU (Att 8)',h:!isStepII}
+            ];
             checks.forEach(i => { if (!i.h && !sncoState.checklist[i.id]) w.push({ f: 'File', m: `Missing: ${i.l}.`, t: 'error' }); });
             return w;
         }
@@ -657,7 +688,7 @@
             const dSkill = parseInt(sncoState.service.dafscLevel);
             const reqSkill = s.skill;
             const isRetrain = (pSkill >= reqSkill && dSkill < reqSkill);
-            const isStep = sncoState.profile.packageType.startsWith('STEP');
+            const isStep = (sncoState.profile.packageType || "").startsWith('STEP');
             const isStepII = sncoState.profile.packageType === 'STEP_II';
             const isE8E9 = ['SMSgt', 'CMSgt'].includes(sncoState.profile.targetRank);
 
@@ -689,6 +720,9 @@
             drawCheck('NCOA', sncoState.service.pmeComplete.NCOA);
             drawCheck('SNCOA', sncoState.service.pmeComplete.SNCOA);
             drawCheck('Degree', sncoState.service.degreeComplete);
+
+            if (el('readiness-submissionDate')) el('readiness-submissionDate').value = sncoState.readiness.submissionDate;
+            if (el('component-toggle')) el('component-toggle').innerHTML = ['DSG', 'AGR', 'Technician', 'Statutory Tour'].map(c => `<button onclick="sncoUpdateField('profile', 'component', '${c}')" class="flex-1 py-3 text-[10px] font-black rounded-lg transition-all ${sncoState.profile.component === c ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-500 hover:bg-white/50'}">${c}</button>`).join('');
 
             const yrsInput = el('service-yrs-input');
             const mosInput = el('service-mos-input');
@@ -739,7 +773,7 @@
             const clrInput = el('clearance-input');
             const clrLabel = el('security-label');
             if (clrInput && clrLabel) {
-                if (m.clAge >= 60) {
+                if (m.clAge !== null && m.clAge >= 60) {
                     clrInput.className = "guidance-trigger w-full border-2 rounded-xl p-3 font-bold outline-none bg-orange-50 border-orange-400 !text-orange-900 shadow-inner";
                     clrLabel.innerText = "SECURITY OVER 5 YRS (MEMO REQ)";
                 } else {
@@ -764,13 +798,16 @@
 
             if (sncoState.currentStep === 4 && el('folder-checklist')) {
                 const items = [{id:'ca26',l:'CA ANG Form 26'},{id:'sou',l:'Service SOU (Att 3)'},{id:'memo',l:'Board Letter'},{id:'epb',l:'EPB'},{id:'fit',l:'Fitness Printout'},{id:'sec_clearance',l:'Sec Clearance Memo'},{id:'retrain_sou',l:'Retrain SOU',h:!isRetrain},{id:'first_sgt_sou',l:'1st Sgt SOU',h:!sncoState.isFirstSgt},{id:'af1206',l:'AF Form 1206',h:!isStep},{id:'bio',l:'Biography',h:!(isStep || isE8E9)},{id:'step2_sou',l:'STEP II SOU (Att 8)',h:!isStepII}];
-                el('folder-checklist').innerHTML = items.filter(i=>!i.h).map(i=>`<div onclick="sncoToggleCheck('${i.id}')" class="h-16 p-3 rounded-2xl border-2 flex items-center justify-between cursor-pointer transition-all ${sncoState.checklist[i.id]?'bg-blue-600 border-blue-600 text-white':'bg-white border-slate-100'}"><span class="text-[9px] font-black uppercase tracking-tight leading-tight pr-2">${i.l}</span>${sncoState.checklist[i.id]?'<i data-lucide="check-circle-2" class="w-4 h-4 text-white shrink-0"></i>':'<div class="w-4 h-4 rounded-full border-2 border-slate-200 shrink-0"></div>'}</div>`).join('');
-                if (el('board-req-text')) el('board-req-text').innerText = sncoState.profile.packageType.startsWith('STEP') ? s.stepComposition : s.composition;
+                el('folder-checklist').innerHTML = items.filter(i=>!i.h).map(i=>`<div onclick="sncoToggleCheck('${i.id}')" class="h-16 p-3 rounded-2xl border-2 flex items-center justify-between cursor-pointer transition-all ${sncoState.checklist[i.id]?'bg-blue-600 border-blue-600 text-white':'bg-white border-slate-100'}"><span class="text-[9px] font-black uppercase tracking-tight leading-tight pr-2">${i.l}</span>${sncoState.checklist[i.id]?'<i data-lucide="check-circle-2" class="w-4 h-4 text-white"></i>':'<div class="w-4 h-4 rounded-full border-2 border-slate-200 shrink-0"></div>'}</div>`).join('');
+                if (el('board-req-text')) el('board-req-text').innerText = (sncoState.profile.packageType || "").startsWith('STEP') ? s.stepComposition : s.composition;
                 if (el('board-comp-checkbox')) el('board-comp-checkbox').checked = sncoState.board.compositionMet;
                 if (el('rev-name')) el('rev-name').value = sncoState.reviewer.name;
                 if (el('rev-rank')) el('rev-rank').value = sncoState.reviewer.rank;
                 if (el('rev-unit')) el('rev-unit').value = sncoState.reviewer.unit;
                 if (el('rev-comments')) el('rev-comments').value = sncoState.reviewer.comments;
+                
+                if (el('service-pafsc')) el('service-pafsc').value = sncoState.service.pafscLevel;
+                if (el('service-dafsc')) el('service-dafsc').value = sncoState.service.dafscLevel;
             }
             lucide.createIcons();
         }
