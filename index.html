@@ -28,7 +28,7 @@
 
         #guidance-popup {
             pointer-events: none;
-            transition: opacity 0.15s ease-in-out, transform 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+            transition: opacity 0.1s ease-in-out, transform 0.1s cubic-bezier(0.16, 1, 0.3, 1);
             z-index: 5000;
             transform: translateY(10px);
         }
@@ -67,14 +67,13 @@
                 </div>
             </div>
             <div class="flex-1 overflow-y-auto p-12 bg-slate-200/50 flex justify-center custom-scrollbar">
-                <!-- PREVIEW PAPER -->
-                <div class="bg-white w-[8.5in] min-h-[11in] shadow-2xl p-16 pb-24 space-y-12 uppercase text-slate-900">
-                    <div class="text-center border-b-4 border-slate-900 pb-8">
+                <div class="bg-white w-[8.5in] min-h-[11in] shadow-2xl p-16 pb-32 space-y-12 uppercase text-slate-900 flex flex-col">
+                    <div class="text-center border-b-4 border-slate-900 pb-8 shrink-0">
                         <h2 class="text-3xl font-black italic tracking-tighter underline decoration-blue-600 underline-offset-8">Promotion Certification</h2>
                         <p class="text-[10px] font-bold tracking-[0.2em] mt-4 opacity-50">California Air National Guard | Official Review Record</p>
                     </div>
 
-                    <div class="grid grid-cols-2 gap-8 font-black border-b border-slate-100 pb-8">
+                    <div class="grid grid-cols-2 gap-8 font-black border-b border-slate-100 pb-8 shrink-0">
                         <div class="space-y-4">
                             <div><p class="text-[9px] text-slate-400 mb-0.5">Candidate</p><p id="prev-name" class="text-xs font-black h-4"></p></div>
                             <div><p class="text-[9px] text-slate-400 mb-0.5">Target Rank</p><p id="prev-rank" class="text-xs font-black h-4"></p></div>
@@ -85,7 +84,7 @@
                         </div>
                     </div>
 
-                    <div class="space-y-6">
+                    <div class="space-y-6 flex-1">
                         <h3 class="text-xs font-black border-l-4 border-blue-600 pl-3">Compliance Audit & Evidence</h3>
                         <div class="border border-slate-100 rounded-2xl overflow-hidden">
                             <table class="w-full text-[9px]">
@@ -101,14 +100,14 @@
                         </div>
                     </div>
 
-                    <div class="space-y-4 pt-4">
+                    <div class="space-y-4 pt-4 shrink-0">
                         <h3 class="text-xs font-black border-l-4 border-blue-600 pl-3">Reviewer Remarks</h3>
-                        <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl">
-                            <p id="prev-comments" class="text-[10px] normal-case leading-relaxed italic text-slate-700 whitespace-pre-wrap break-words"></p>
+                        <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl max-w-full">
+                            <p id="prev-comments" class="text-[10px] normal-case leading-relaxed italic text-slate-700 whitespace-pre-wrap break-words overflow-hidden"></p>
                         </div>
                     </div>
 
-                    <div class="pt-8 grid grid-cols-2 gap-16">
+                    <div class="pt-16 grid grid-cols-2 gap-16 shrink-0 pb-12">
                         <div class="space-y-12">
                             <div class="border-b-2 border-slate-900 pb-2">
                                 <p class="text-[10px] font-bold text-slate-400">Reviewer Name/Rank</p>
@@ -119,7 +118,7 @@
                                 <div class="h-4"></div>
                             </div>
                         </div>
-                        <div class="bg-slate-50 border-2 border-dashed border-slate-200 rounded-3xl flex flex-col items-center justify-center p-8 text-center">
+                        <div class="bg-slate-50 border-2 border-dashed border-slate-200 rounded-3xl flex flex-col items-center justify-center p-8 text-center min-h-[140px]">
                             <i data-lucide="shield-check" class="w-12 h-12 text-slate-200 mb-4"></i>
                             <p class="text-[10px] font-bold text-slate-300 uppercase tracking-widest">Official Stamp Area</p>
                         </div>
@@ -393,6 +392,7 @@
                     </div>
                 </div>
 
+                <!-- NAVIGATION FOOTER -->
                 <div class="bg-slate-50 p-6 border-t border-slate-100 flex justify-between items-center">
                     <button id="prev-btn" onclick="sncoChangeStep(-1)" class="px-8 py-3 text-xs font-black text-slate-400 uppercase tracking-widest hover:text-slate-600 transition-colors">
                         <i data-lucide="chevron-left" class="inline-block w-4 h-4 mr-1"></i> Back
@@ -405,6 +405,7 @@
                 </div>
             </div>
 
+            <!-- SIDEBAR AUDIT -->
             <div class="lg:col-span-4 flex flex-col h-full">
                 <div class="bg-white rounded-[40px] p-8 border border-slate-200 shadow-sm flex-1 flex flex-col max-h-[850px] sticky top-8">
                     <div class="flex items-center gap-2 mb-6 border-b border-slate-50 pb-4">
@@ -494,7 +495,7 @@
                 }
             };
             const hide = () => { popup.classList.remove('opacity-100'); popup.style.transform = 'translateY(10px)'; };
-            document.addEventListener('focusin', (e) => { if(e.target.classList.contains('guidance-trigger')) show(e.target); });
+            document.addEventListener('focusin', (e) => { if(e && e.target && e.target.classList && e.target.classList.contains('guidance-trigger')) show(e.target); });
             document.addEventListener('mouseover', (e) => {
                 const trigger = e.target.closest('.guidance-trigger');
                 if (trigger) show(trigger);
@@ -516,8 +517,10 @@
         function calcMonths(date) {
             if (!date) return null;
             const d = new Date(date + 'T00:00:00');
+            if (isNaN(d.getTime())) return null;
             const now = new Date();
-            return (now.getFullYear() - d.getFullYear()) * 12 + (now.getMonth() - d.getMonth());
+            const diff = (now.getFullYear() - d.getFullYear()) * 12 + (now.getMonth() - d.getMonth());
+            return Math.max(0, diff);
         }
 
         function sncoUpdateField(cat, field, val) { if (cat && sncoState[cat]) sncoState[cat][field] = val; sncoRender(); }
@@ -579,7 +582,7 @@
                         <td class="px-4 py-2 font-bold">${row.label}</td>
                         <td class="px-4 py-2 text-slate-500">${row.evidence}</td>
                         <td class="px-4 py-2 text-center">
-                            ${row.status ? '<span class="text-green-600 text-lg">✔</span>' : '<span class="text-red-600 text-lg">✘</span>'}
+                            ${row.status ? '<span class="text-green-600 font-black">✔</span>' : '<span class="text-red-600 font-black">✘</span>'}
                         </td>
                     </tr>
                 `).join('');
@@ -615,62 +618,36 @@
 
             if (!sncoState.profile.name || !sncoState.profile.unit) w.push({ f: 'Incomplete', m: 'Name/Unit required.', t: 'error' });
             if (pSkill < s.skill) w.push({ f: 'Skill Level', m: `Ineligible: PAFSC < ${s.skill}.`, t: 'error' });
+            
             if (isRetrain) {
                 w.push({ f: 'Retraining', m: 'Retraining detected. SOU mandatory.', t: 'warning' });
-                if (dSkill < 3) {
-                    w.push({ f: 'Hard Stop', m: 'Ineligible: Needs 3-level in Duty.', t: 'error' });
-                }
+                if (dSkill < 3) w.push({ f: 'Hard Stop', m: 'Ineligible: Needs 3-level in Duty.', t: 'error' });
             }
             Object.entries(sncoState.readiness.adminHolds).forEach(([id, active]) => {
                 if (active) w.push({ f: 'Hard Stop', m: `Member in ${id} status.`, t: 'error' });
             });
             const tisVal = isAGR ? m.tafms : m.sat;
-            const tisTerm = isAGR ? 'TAFMS' : 'Satisfactory Service';
-            if (tisVal < s.minTis) w.push({ f: 'Eligibility', m: `Needs ${s.tisLabel} ${tisTerm}.`, t: 'error' });
-            
+            const term = isAGR ? 'TAFMS' : 'Satisfactory Service';
+            if (tisVal < s.minTis) w.push({ f: 'Eligibility', m: `Needs ${s.tisLabel} ${term}.`, t: 'error' });
             if (m.tig === null) w.push({ f: 'Incomplete', m: 'DOR missing.', t: 'error' });
             else if (m.tig < 24 && !sncoState.profile.targetRank.startsWith('T')) w.push({ f: 'TIG', m: 'Needs 24 Mos.', t: 'error' });
-            
-            if (m.epbAge === null) {
-                w.push({ f: 'Incomplete', m: 'EPB missing.', t: 'error' });
-            } else {
-                const epbLimit = isAGR ? 12 : 24;
-                if (m.epbAge > epbLimit) {
-                    w.push({ f: 'EPB', m: `Out of Cycle (> ${isAGR ? '1 Yr' : '2 Yrs'}).`, t: 'error' });
-                }
-            }
-
+            if (m.epbAge === null) w.push({ f: 'Incomplete', m: 'EPB missing.', t: 'error' });
+            else { if (m.epbAge > (isAGR ? 12 : 24)) w.push({ f: 'EPB', m: 'Out of Cycle.', t: 'error' }); }
             if (sncoState.readiness.fitStatus === 'Failing') w.push({ f: 'Ineligible', m: 'Fitness Failing.', t: 'error' });
+            if (sncoState.readiness.fitStatus === 'Pregnancy') w.push({ f: 'Fitness', m: 'Pregnancy exemption active.', t: 'warning' });
             if (m.fitTgt && m.fitAct && m.fitAct < m.fitTgt) w.push({ f: 'Fitness', m: 'Currency error.', t: 'error' });
             
-            if (!sncoState.readiness.clearanceDate) {
-                w.push({ f: 'Security', m: 'Adjudication Date missing.', t: 'error' });
-            } else if (m.clAge >= 60) {
-                w.push({ f: 'Security', m: `Adjudication date is over 5 Yrs old. Memo required.`, t: 'warning' });
-            }
+            if (!sncoState.readiness.clearanceDate) w.push({ f: 'Security', m: 'Adjudication missing.', t: 'error' });
+            else if (m.clAge >= 60) w.push({ f: 'Security', m: 'Over 5 Yrs old.', t: 'warning' });
             
-            if (s.pme) s.pme.forEach(pme => { if (!sncoState.service.pmeComplete[pme]) w.push({ f: 'PME', m: `Requires ${pme} completion.`, t: 'error' }); });
+            if (s.pme) s.pme.forEach(pme => { if (!sncoState.service.pmeComplete[pme]) w.push({ f: 'PME', m: `Requires ${pme}.`, t: 'error' }); });
             if (s.degree && !sncoState.service.degreeComplete) w.push({ f: 'Education', m: 'Requires CCAF.', t: 'error' });
             if (!sncoState.board.compositionMet) w.push({ f: 'Board', m: 'Not verified.', t: 'error' });
             
-            const checks = [
-                {id:'ca26',l:'CA ANG Form 26'},
-                {id:'sou',l:'Service SOU'},
-                {id:'memo',l:'Board Letter'},
-                {id:'epb',l:'EPB'},
-                {id:'fit',l:'Fitness Printout'},
-                {id:'sec_clearance',l:'Sec Clearance Memo'},
-                {id:'retrain_sou',l:'Retrain SOU',h:!isRetrain},
-                {id:'first_sgt_sou',l:'1st Sgt SOU',h:!sncoState.isFirstSgt},
-                {id:'af1206',l:'AF Form 1206',h:!isStep},
-                {id:'bio',l:'Biography',h:!(isStep || isE8E9)},
-                {id:'step2_sou',l:'STEP II SOU (Att 8)',h:!isStepII}
-            ];
+            const checks = [{id:'ca26',l:'CA ANG Form 26'},{id:'sou',l:'Service SOU'},{id:'memo',l:'Board Letter'},{id:'epb',l:'EPB'},{id:'fit',l:'Fitness Printout'},{id:'sec_clearance',l:'Sec Clearance Memo'},{id:'retrain_sou',l:'Retrain SOU',h:!isRetrain},{id:'first_sgt_sou',l:'1st Sgt SOU',h:!sncoState.isFirstSgt},{id:'af1206',l:'AF Form 1206',h:!isStep},{id:'bio',l:'Biography',h:!(isStep || isE8E9)},{id:'step2_sou',l:'STEP II SOU (Att 8)',h:!isStepII}];
             checks.forEach(i => { if (!i.h && !sncoState.checklist[i.id]) w.push({ f: 'File', m: `Missing: ${i.l}.`, t: 'error' }); });
             return w;
         }
-
-        const el = (id) => document.getElementById(id);
 
         function sncoRender() {
             const m = sncoGetMetrics();
@@ -690,7 +667,7 @@
             if (el('tis-label')) el('tis-label').innerText = `Pay Entry Date (Pay Age: ${m.tis !== null ? formatYM(m.tis) : 'N/A'})`;
             if (el('tig-label')) el('tig-label').innerText = `Date of Rank (TIG: ${m.tig !== null ? formatYM(m.tig) : 'N/A'})`;
             if (el('logic-alerts')) el('logic-alerts').classList.toggle('hidden', !isRetrain);
-            if (el('slot-req-badge')) el('slot-req-badge').innerText = `${reqSkill}-Level Slot Required`;
+            if (el('slot-req-badge')) el('slot-req-badge').innerText = `${reqSkill}-Level Required`;
 
             const epbInput = el('service-epbDate');
             if (epbInput) {
@@ -702,20 +679,16 @@
             if (el('row-sncoa')) el('row-sncoa').classList.toggle('hidden', !['SMSgt', 'CMSgt'].includes(sncoState.profile.targetRank));
             if (el('row-degree')) el('row-degree').classList.toggle('hidden', !['SMSgt', 'CMSgt'].includes(sncoState.profile.targetRank));
             
-            // Visual PME Toggles (Replaces standard checkboxes)
-            const updateVisualToggle = (id, state) => {
+            const drawCheck = (id, state) => {
                 const box = el('check-' + id.toLowerCase());
                 if (box) {
-                    box.innerHTML = state ? '<i data-lucide="check" class="w-3 h-3 text-white"></i>' : '';
+                    box.innerHTML = state ? `<svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="4" d="M5 13l4 4L19 7"></path></svg>` : '';
                     box.className = `w-5 h-5 rounded-lg border-2 flex items-center justify-center transition-all ${state ? 'bg-blue-600 border-blue-600' : 'border-slate-700'}`;
                 }
             };
-            updateVisualToggle('NCOA', sncoState.service.pmeComplete.NCOA);
-            updateVisualToggle('SNCOA', sncoState.service.pmeComplete.SNCOA);
-            updateVisualToggle('Degree', sncoState.service.degreeComplete);
-
-            if (el('readiness-submissionDate')) el('readiness-submissionDate').value = sncoState.readiness.submissionDate;
-            if (el('component-toggle')) el('component-toggle').innerHTML = ['DSG', 'AGR', 'Technician', 'Statutory Tour'].map(c => `<button onclick="sncoUpdateField('profile', 'component', '${c}')" class="flex-1 py-3 text-[10px] font-black rounded-lg transition-all ${sncoState.profile.component === c ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-500 hover:bg-white/50'}">${c}</button>`).join('');
+            drawCheck('NCOA', sncoState.service.pmeComplete.NCOA);
+            drawCheck('SNCOA', sncoState.service.pmeComplete.SNCOA);
+            drawCheck('Degree', sncoState.service.degreeComplete);
 
             const yrsInput = el('service-yrs-input');
             const mosInput = el('service-mos-input');
@@ -727,33 +700,35 @@
                     el('service-summary-value').innerText = formatYM(m.tafms);
                     if (document.activeElement !== yrsInput) yrsInput.value = sncoState.service.tafmsYears;
                     if (document.activeElement !== mosInput) mosInput.value = sncoState.service.tafmsMonths;
-                    yrsInput.className = "guidance-trigger w-full rounded-xl p-3 text-xl font-black outline-none bg-slate-800 border-slate-700 text-white";
-                    mosInput.className = "guidance-trigger w-full rounded-xl p-3 text-xl font-black outline-none bg-slate-800 border-slate-700 text-white";
+                    yrsInput.className = "guidance-trigger w-full rounded-xl p-3 text-xl font-black outline-none bg-slate-800 border-slate-700 !text-white";
+                    mosInput.className = "guidance-trigger w-full rounded-xl p-3 text-xl font-black outline-none bg-slate-800 border-slate-700 !text-white";
                 } else {
                     box.className = "p-6 rounded-[32px] space-y-4 shadow-xl bg-white border-slate-200 text-slate-900 transition-all";
                     el('service-type-label').innerText = "SATISFACTORY SERVICE (NGB 23)";
                     el('service-summary-value').innerText = formatYM(m.sat);
                     if (document.activeElement !== yrsInput) yrsInput.value = sncoState.service.satYears;
                     if (document.activeElement !== mosInput) mosInput.value = sncoState.service.satMonths;
-                    yrsInput.className = "guidance-trigger w-full rounded-xl p-3 text-xl font-black outline-none bg-slate-50 border-slate-200 text-slate-900 focus:bg-white focus:border-blue-500";
-                    mosInput.className = "guidance-trigger w-full rounded-xl p-3 text-xl font-black outline-none bg-slate-50 border-slate-200 text-slate-900 focus:bg-white focus:border-blue-500";
+                    yrsInput.className = "guidance-trigger w-full rounded-xl p-3 text-xl font-black outline-none bg-slate-50 border-slate-200 !text-slate-900 focus:bg-white focus:border-blue-500";
+                    mosInput.className = "guidance-trigger w-full rounded-xl p-3 text-xl font-black outline-none bg-slate-50 border-slate-200 !text-slate-900 focus:bg-white focus:border-blue-500";
                 }
             }
 
             if (el('admin-flags')) el('admin-flags').innerHTML = ['demotion', 'retirement', 'suspended'].map(id => `<div class="flex items-center justify-between"><span class="text-xs font-bold text-slate-700 capitalize">${id.replace('suspended', 'Legal/Hold')}?</span><button onclick="sncoToggleAdminHold('${id}')" class="w-12 h-6 rounded-full relative transition-all ${sncoState.readiness.adminHolds[id] ? 'bg-red-600' : 'bg-slate-300'}"><div class="absolute top-1 w-4 h-4 bg-white rounded-full transition-all ${sncoState.readiness.adminHolds[id] ? 'left-7' : 'left-1'}"></div></button></div>`).join('');
 
-            const auditResults = el('audit-results');
+            const auditRes = el('audit-results');
             const w = sncoGetWarnings();
             const isErr = w.some(item => item.t === 'error');
-            if (auditResults && el('audit-summary-card') && el('audit-summary-verdict')) {
+            const isWarn = w.some(item => item.t === 'warning');
+
+            if (auditRes && el('audit-summary-card') && el('audit-summary-verdict')) {
                 if (w.length === 0) {
-                    auditResults.innerHTML = `<div class="flex-1 flex flex-col items-center justify-center py-10 text-center animate-in fade-in"><div class="w-16 h-16 bg-green-50 rounded-full flex items-center justify-center mb-4 shadow-inner ring-4 ring-green-50/50"><i data-lucide="check-circle-2" class="w-8 h-8 text-green-600"></i></div><p class="text-[11px] font-black text-green-900 uppercase italic tracking-widest">Compliant Record</p></div>`;
+                    auditRes.innerHTML = `<div class="flex-1 flex flex-col items-center justify-center py-10 text-center animate-in fade-in"><div class="w-16 h-16 bg-green-50 rounded-full flex items-center justify-center mb-4"><i data-lucide="check-circle-2" class="w-8 h-8 text-green-600"></i></div><p class="text-[11px] font-black text-green-900 uppercase italic tracking-widest">Compliant Record</p></div>`;
                     el('audit-summary-card').className = "mt-6 p-6 rounded-3xl border-2 bg-green-50 border-green-200 text-green-900 shrink-0";
                     el('audit-summary-verdict').innerText = "PASS";
                 } else {
-                    auditResults.innerHTML = w.map(item => `<div class="p-4 rounded-2xl border flex gap-3 items-start animate-in zoom-in-95 ${item.t === 'error' ? 'bg-red-50 border-red-100 text-red-700' : 'bg-orange-50 border-orange-100 text-orange-700'}"><i data-lucide="${item.t === 'error' ? 'shield-alert' : 'alert-circle'}" class="w-5 h-5 mt-0.5 shrink-0"></i><div><p class="text-[9px] font-black uppercase opacity-60 tracking-widest leading-none">${item.f}</p><p class="text-[10px] font-bold leading-tight">${item.m}</p></div></div>`).join('');
-                    el('audit-summary-card').className = `mt-6 p-6 rounded-3xl border-2 shrink-0 ${isErr ? 'bg-red-50 border-red-200 text-red-900' : 'bg-orange-50 border-orange-200 text-orange-900'}`;
-                    el('audit-summary-verdict').innerText = isErr ? "FAIL" : "CAUTION";
+                    auditRes.innerHTML = w.map(item => `<div class="p-4 rounded-2xl border flex gap-3 items-start animate-in zoom-in-95 ${item.t === 'error' ? 'bg-red-50 border-red-100 text-red-700' : 'bg-orange-50 border-orange-100 text-orange-700'}"><i data-lucide="${item.t === 'error' ? 'shield-alert' : 'alert-circle'}" class="w-5 h-5 mt-0.5 shrink-0"></i><div><p class="text-[9px] font-black uppercase opacity-60 tracking-widest leading-none">${item.f}</p><p class="text-[10px] font-bold leading-tight">${item.m}</p></div></div>`).join('');
+                    el('audit-summary-card').className = `mt-6 p-6 rounded-3xl border-2 shrink-0 ${isErr ? 'bg-red-50 border-red-200 text-red-900' : (isWarn ? 'bg-orange-50 border-orange-200 text-orange-900' : 'bg-blue-50 border-blue-200 text-blue-900')}`;
+                    el('audit-summary-verdict').innerText = isErr ? "FAIL" : (isWarn ? "CAUTION" : "PASS");
                 }
             }
 
@@ -765,12 +740,10 @@
             const clrLabel = el('security-label');
             if (clrInput && clrLabel) {
                 if (m.clAge >= 60) {
-                    clrInput.className = "guidance-trigger w-full border-2 rounded-xl p-3 font-bold outline-none bg-orange-50 border-orange-400 text-orange-900 shadow-inner";
-                    clrLabel.className = "text-[10px] font-black text-orange-600 uppercase tracking-widest block mb-1";
+                    clrInput.className = "guidance-trigger w-full border-2 rounded-xl p-3 font-bold outline-none bg-orange-50 border-orange-400 !text-orange-900 shadow-inner";
                     clrLabel.innerText = "SECURITY OVER 5 YRS (MEMO REQ)";
                 } else {
-                    clrInput.className = "guidance-trigger w-full border-2 rounded-xl p-3 font-bold outline-none bg-slate-50 border-slate-200";
-                    clrLabel.className = "text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1";
+                    clrInput.className = "guidance-trigger w-full border-2 rounded-xl p-3 font-bold outline-none bg-slate-50 border-slate-200 !text-slate-900";
                     clrLabel.innerText = "Security Adjudication Date";
                 }
             }
@@ -790,29 +763,14 @@
             }
 
             if (sncoState.currentStep === 4 && el('folder-checklist')) {
-                const items = [
-                    {id:'ca26',l:'CA ANG Form 26'},
-                    {id:'sou',l:'Service SOU (Att 3)'},
-                    {id:'memo',l:'Board Letter'},
-                    {id:'epb',l:'EPB'},
-                    {id:'fit',l:'Fitness Printout'},
-                    {id:'sec_clearance',l:'Sec Clearance Memo'},
-                    {id:'retrain_sou',l:'Retrain SOU',h:!isRetrain},
-                    {id:'first_sgt_sou',l:'1st Sgt SOU',h:!sncoState.isFirstSgt},
-                    {id:'af1206',l:'AF Form 1206',h:!isStep},
-                    {id:'bio',l:'Biography',h:!(isStep || isE8E9)},
-                    {id:'step2_sou',l:'STEP II SOU (Att 8)',h:!isStepII}
-                ];
-                el('folder-checklist').innerHTML = items.filter(i=>!i.h).map(i=>`<div onclick="sncoToggleCheck('${i.id}')" class="h-16 p-3 rounded-2xl border-2 flex items-center justify-between cursor-pointer transition-all ${sncoState.checklist[i.id]?'bg-blue-600 border-blue-600 text-white':'bg-white border-slate-100'}"><span class="text-[9px] font-black uppercase tracking-tight leading-tight pr-2">${i.l}</span>${sncoState.checklist[i.id]?'<i data-lucide="check-circle-2" class="w-4 h-4 text-white"></i>':'<div class="w-4 h-4 rounded-full border-2 border-slate-200"></div>'}</div>`).join('');
+                const items = [{id:'ca26',l:'CA ANG Form 26'},{id:'sou',l:'Service SOU (Att 3)'},{id:'memo',l:'Board Letter'},{id:'epb',l:'EPB'},{id:'fit',l:'Fitness Printout'},{id:'sec_clearance',l:'Sec Clearance Memo'},{id:'retrain_sou',l:'Retrain SOU',h:!isRetrain},{id:'first_sgt_sou',l:'1st Sgt SOU',h:!sncoState.isFirstSgt},{id:'af1206',l:'AF Form 1206',h:!isStep},{id:'bio',l:'Biography',h:!(isStep || isE8E9)},{id:'step2_sou',l:'STEP II SOU (Att 8)',h:!isStepII}];
+                el('folder-checklist').innerHTML = items.filter(i=>!i.h).map(i=>`<div onclick="sncoToggleCheck('${i.id}')" class="h-16 p-3 rounded-2xl border-2 flex items-center justify-between cursor-pointer transition-all ${sncoState.checklist[i.id]?'bg-blue-600 border-blue-600 text-white':'bg-white border-slate-100'}"><span class="text-[9px] font-black uppercase tracking-tight leading-tight pr-2">${i.l}</span>${sncoState.checklist[i.id]?'<i data-lucide="check-circle-2" class="w-4 h-4 text-white shrink-0"></i>':'<div class="w-4 h-4 rounded-full border-2 border-slate-200 shrink-0"></div>'}</div>`).join('');
                 if (el('board-req-text')) el('board-req-text').innerText = sncoState.profile.packageType.startsWith('STEP') ? s.stepComposition : s.composition;
                 if (el('board-comp-checkbox')) el('board-comp-checkbox').checked = sncoState.board.compositionMet;
                 if (el('rev-name')) el('rev-name').value = sncoState.reviewer.name;
                 if (el('rev-rank')) el('rev-rank').value = sncoState.reviewer.rank;
                 if (el('rev-unit')) el('rev-unit').value = sncoState.reviewer.unit;
                 if (el('rev-comments')) el('rev-comments').value = sncoState.reviewer.comments;
-                
-                if (el('service-pafsc')) el('service-pafsc').value = sncoState.service.pafscLevel;
-                if (el('service-dafsc')) el('service-dafsc').value = sncoState.service.dafscLevel;
             }
             lucide.createIcons();
         }
