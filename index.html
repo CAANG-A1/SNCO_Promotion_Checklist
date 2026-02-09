@@ -50,7 +50,7 @@
     <!-- FLOATING GUIDANCE POPUP -->
     <div id="guidance-popup" class="hidden opacity-0 absolute bg-slate-900 text-white p-4 rounded-2xl shadow-2xl max-w-xs text-[11px] font-medium leading-relaxed border border-white/10 no-print">
         <div class="flex items-center gap-2 mb-2 border-b border-white/10 pb-2">
-            <i data-lucide="info" class="w-4 h-4 text-blue-400"></i>
+            <i data-lucide="shield-check" class="w-4 h-4 text-blue-400"></i>
             <span class="font-black uppercase tracking-widest text-blue-400 text-[10px]">Policy Guidance</span>
         </div>
         <p id="guidance-text" class="text-slate-300"></p>
@@ -73,25 +73,23 @@
                 </div>
             </div>
             <div class="flex-1 overflow-y-auto p-12 bg-slate-200/50 flex justify-center custom-scrollbar">
-                <!-- PREVIEW PAPER -->
-                <div class="bg-white w-[8.5in] min-h-[11in] shadow-2xl p-16 pb-24 space-y-10 uppercase text-slate-900 flex flex-col">
+                <div class="bg-white w-[8.5in] min-h-[11in] shadow-2xl p-16 pb-32 space-y-10 uppercase text-slate-900 flex flex-col text-xs font-bold">
                     <div class="text-center border-b-4 border-slate-900 pb-8 shrink-0">
                         <h2 class="text-3xl font-black italic tracking-tighter underline decoration-blue-600 underline-offset-8">Promotion Certification</h2>
                         <p class="text-[10px] font-bold tracking-[0.2em] mt-4 opacity-50">California Air National Guard | Official Review Record</p>
                     </div>
 
                     <div class="grid grid-cols-2 gap-8 font-black border-b border-slate-100 pb-8 shrink-0">
-                        <div class="space-y-4 text-xs">
+                        <div class="space-y-4">
                             <div><p class="text-[9px] text-slate-400 mb-0.5">Candidate</p><p id="prev-name" class="text-xs font-black h-4"></p></div>
                             <div><p class="text-[9px] text-slate-400 mb-0.5">Target Rank</p><p id="prev-rank" class="text-xs font-black h-4"></p></div>
                         </div>
-                        <div class="space-y-4 text-xs">
+                        <div class="space-y-4">
                             <div><p class="text-[9px] text-slate-400 mb-0.5">Assigned Unit</p><p id="prev-unit" class="text-xs font-black h-4"></p></div>
                             <div><p class="text-[9px] text-slate-400 mb-0.5">Review Status</p><p id="prev-status" class="text-xs font-black h-4"></p></div>
                         </div>
                     </div>
 
-                    <!-- CONTENT AREA (Middle) -->
                     <div class="flex-1 space-y-8">
                         <div class="space-y-3">
                             <h3 class="text-xs font-black border-l-4 border-blue-600 pl-3 uppercase italic">Compliance Audit & Evidence</h3>
@@ -117,8 +115,7 @@
                         </div>
                     </div>
 
-                    <!-- SIGNATURE BLOCK (Bottom) -->
-                    <div class="mt-auto pt-8 grid grid-cols-2 gap-16 shrink-0">
+                    <div class="mt-auto pt-16 grid grid-cols-2 gap-16 shrink-0 pb-12">
                         <div class="space-y-12">
                             <div class="border-b-2 border-slate-900 pb-2">
                                 <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none mb-1">Reviewer Name/Rank</p>
@@ -172,7 +169,6 @@
                     <div id="step-1" class="snco-step space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
                         <div class="border-b border-slate-100 pb-4">
                             <h2 class="text-2xl font-black tracking-tight uppercase italic tracking-tighter">1. Member Identification</h2>
-                            <p class="text-slate-500 text-sm italic">Define candidate logic and administrative window.</p>
                         </div>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div class="space-y-2">
@@ -205,7 +201,7 @@
                             <div class="space-y-2 md:col-span-2 p-6 bg-blue-50 rounded-[32px] border border-blue-100 flex flex-col md:flex-row gap-6 items-center">
                                 <div class="flex-1 space-y-1">
                                     <label class="text-[10px] font-black text-blue-600 uppercase tracking-widest block">HQ Submission Date</label>
-                                    <p class="text-[10px] text-slate-400 font-medium italic leading-tight italic">Policy Basis: Fitness must cover processing timeline.</p>
+                                    <p class="text-[10px] text-slate-400 font-medium italic leading-tight italic">Policy: Member must remain current through end of following month.</p>
                                 </div>
                                 <input type="date" id="readiness-submissionDate" oninput="sncoUpdateField('readiness', 'submissionDate', this.value)" class="guidance-trigger w-full md:w-auto bg-white border border-blue-200 rounded-2xl p-4 text-sm font-bold outline-none">
                             </div>
@@ -213,11 +209,6 @@
                             <div class="space-y-3 md:col-span-2">
                                 <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Component Status</label>
                                 <div id="component-toggle" class="flex flex-wrap bg-slate-100 rounded-xl p-1 gap-1"></div>
-                            </div>
-                            
-                            <div id="logic-alerts" class="hidden md:col-span-2 p-4 bg-orange-50 border border-orange-100 rounded-2xl flex items-center gap-3">
-                                <i data-lucide="zap" class="w-5 h-5 text-orange-500"></i>
-                                <div class="text-[10px] font-bold text-orange-900 uppercase tracking-tight">System Notice: Retraining Promotion detected.</div>
                             </div>
                         </div>
                     </div>
@@ -230,15 +221,15 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                             <div class="space-y-4">
                                 <div class="space-y-1">
-                                    <label id="tis-label" class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1">Pay Entry Date</label>
+                                    <label id="tis-label" class="guidance-trigger text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1">Pay Entry Date</label>
                                     <input type="date" id="service-payDate" oninput="sncoUpdateField('service', 'payDate', this.value)" class="guidance-trigger w-full bg-slate-50 border border-slate-200 rounded-2xl p-3 text-sm font-bold outline-none">
                                 </div>
                                 <div class="space-y-1">
-                                    <label id="tig-label" class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1">Date of Rank</label>
+                                    <label id="tig-label" class="guidance-trigger text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1">Date of Rank</label>
                                     <input type="date" id="service-dor" oninput="sncoUpdateField('service', 'dor', this.value)" class="guidance-trigger w-full bg-slate-50 border border-slate-200 rounded-2xl p-3 text-sm font-bold outline-none">
                                 </div>
                                 <div class="space-y-1">
-                                    <label id="epb-label" class="text-[10px] font-black text-slate-400 uppercase tracking-widest italic block mb-1">Latest EPB Closeout Date</label>
+                                    <label id="epb-label" class="guidance-trigger text-[10px] font-black text-slate-400 uppercase tracking-widest italic block mb-1">Latest EPB Closeout Date</label>
                                     <input type="date" id="service-epbDate" oninput="sncoUpdateField('service', 'epbDate', this.value)" class="guidance-trigger w-full bg-blue-50 border border-blue-100 rounded-2xl p-3 text-sm font-bold outline-none transition-all">
                                 </div>
 
@@ -263,10 +254,7 @@
                                 </div>
                             </div>
                             <div class="space-y-4">
-                                <!-- REDESIGNED SERVICE CONTAINER -->
-                                <div id="tafms-container" class="p-6 rounded-[40px] space-y-4 shadow-xl border-4 transition-all min-h-[160px] flex flex-col justify-center">
-                                    <!-- Injected via JS -->
-                                </div>
+                                <div id="tafms-container" class="p-6 rounded-[40px] space-y-4 shadow-xl border-4 transition-all min-h-[160px] flex flex-col justify-center"></div>
                                 <div class="p-6 bg-slate-50 rounded-[32px] border border-slate-200 space-y-4 shadow-inner">
                                     <div class="flex justify-between items-center border-b pb-2">
                                         <h3 class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Skill Level Audit</h3>
@@ -280,7 +268,7 @@
                                             </select>
                                         </div>
                                         <div class="space-y-1">
-                                            <label class="text-[9px] font-bold text-slate-500 uppercase tracking-tight">Current Duty (DAFSC) Level</label>
+                                            <label id="dafsc-label" class="guidance-trigger text-[9px] font-bold text-slate-500 uppercase tracking-tight leading-tight">Member's Awarded Skill Level in Current Duty (DAFSC)</label>
                                             <select id="service-dafsc" onchange="sncoUpdateField('service', 'dafscLevel', this.value)" class="w-full bg-white border border-slate-200 rounded-xl p-3 text-xs font-black text-slate-900">
                                                 <option value="1">1</option><option value="3">3</option><option value="5">5</option><option value="7" selected>7</option><option value="9">9</option>
                                             </select>
@@ -311,7 +299,7 @@
                                     </div>
                                 </div>
                                 <div class="space-y-1">
-                                    <label id="fit-exp-label" class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1">Fitness Expiration Date</label>
+                                    <label id="fit-exp-label" class="guidance-trigger text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1">Fitness Expiration Date</label>
                                     <input type="date" id="readiness-fitExpirationDate" oninput="sncoUpdateField('readiness', 'fitExpirationDate', this.value)" class="guidance-trigger w-full border-2 rounded-xl p-3 font-bold outline-none bg-slate-50 border-slate-200 transition-all text-slate-900">
                                 </div>
                                 <div id="fit-currency-box" class="p-4 rounded-2xl border bg-slate-50 space-y-1 shadow-inner">
@@ -321,8 +309,8 @@
                             </div>
                             <div class="space-y-4">
                                 <div class="space-y-1">
-                                    <label id="security-label" class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1 uppercase italic">Security Adjudication Date</label>
-                                    <input type="date" id="clearance-input" oninput="sncoUpdateField('readiness', 'clearanceDate', this.value)" class="guidance-trigger w-full border-2 rounded-xl p-3 font-bold outline-none bg-slate-50 border-slate-200 transition-all text-slate-900">
+                                    <label id="security-label" class="guidance-trigger text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1 uppercase italic">Security Adjudication Date</label>
+                                    <input type="date" id="clearance-input" oninput="sncoUpdateField('readiness', 'clearanceDate', this.value)" class="guidance-trigger w-full border-2 rounded-xl p-3 font-bold outline-none bg-slate-50 border border-slate-200 transition-all text-slate-900">
                                 </div>
                                 <div class="bg-slate-50 p-6 rounded-[32px] border border-slate-200 space-y-4 shadow-inner text-slate-400 font-black text-[10px] uppercase">
                                     <p class="border-b pb-2 italic">Administrative Holds</p>
@@ -355,18 +343,24 @@
                             </div>
                             <div class="bg-slate-50 p-8 rounded-[40px] border border-slate-200 shadow-inner space-y-6">
                                 <h3 class="font-black text-xs uppercase text-blue-600 flex items-center gap-3"><i data-lucide="user-check" class="w-5 h-5"></i> Certifying Reviewer Details</h3>
-                                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                    <div class="md:col-span-3">
-                                        <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-1">Full Name</label>
-                                        <input type="text" id="rev-name" oninput="sncoUpdateField('reviewer', 'name', this.value)" class="guidance-trigger w-full bg-white border border-slate-200 rounded-xl p-3 text-xs font-bold outline-none text-slate-900">
+                                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                        <div class="md:col-span-3">
+                                            <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-1">Full Name</label>
+                                            <input type="text" id="rev-name" oninput="sncoUpdateField('reviewer', 'name', this.value)" class="guidance-trigger w-full bg-white border border-slate-200 rounded-xl p-3 text-xs font-bold outline-none text-slate-900" placeholder="DOE, JOHN B">
+                                        </div>
+                                        <div class="md:col-span-1 text-xs">
+                                            <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-1">Rank</label>
+                                            <input type="text" id="rev-rank" oninput="sncoUpdateField('reviewer', 'rank', this.value)" class="guidance-trigger w-full bg-white border border-slate-200 rounded-xl p-3 text-xs font-bold outline-none text-slate-900" placeholder="SMSGT">
+                                        </div>
+                                        <div class="md:col-span-2 text-xs">
+                                            <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-1">Unit</label>
+                                            <input type="text" id="rev-unit" oninput="sncoUpdateField('reviewer', 'unit', this.value)" class="guidance-trigger w-full bg-white border border-slate-200 rounded-xl p-3 text-xs font-bold outline-none text-slate-900" placeholder="144 FSS / MPF">
+                                        </div>
                                     </div>
-                                    <div class="md:col-span-1 text-xs">
-                                        <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-1">Rank</label>
-                                        <input type="text" id="rev-rank" oninput="sncoUpdateField('reviewer', 'rank', this.value)" class="guidance-trigger w-full bg-white border border-slate-200 rounded-xl p-3 text-xs font-bold outline-none text-slate-900">
-                                    </div>
-                                    <div class="md:col-span-2 text-xs">
-                                        <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-1">Unit</label>
-                                        <input type="text" id="rev-unit" oninput="sncoUpdateField('reviewer', 'unit', this.value)" class="guidance-trigger w-full bg-white border border-slate-200 rounded-xl p-3 text-xs font-bold outline-none text-slate-900">
+                                    <div>
+                                        <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-1 text-slate-400 leading-none mb-1">Remarks</label>
+                                        <textarea id="rev-comments" oninput="sncoUpdateField('reviewer', 'comments', this.value)" class="guidance-trigger w-full bg-white border border-slate-200 rounded-xl p-3 text-[10px] font-medium min-h-[105px] outline-none text-slate-900" placeholder="Enter findings, waiver notes, etc..."></textarea>
                                     </div>
                                 </div>
                             </div>
@@ -405,20 +399,26 @@
     </div>
 
     <script>
+        // GLOBAL HELPERS
         const el = (id) => document.getElementById(id);
 
         const guidanceMap = {
-            'prof-name': "Candidate Name: 'LAST, FIRST MI'.",
-            'prof-unit': "Member's assigned unit designation.",
-            'prof-rank': "Target rank grade.",
-            'prof-package': "Standard: Vacancy. STEP: Accelerated.",
-            'readiness-submissionDate': "HQ Submission Date. Used for fitness window policy checks.",
-            'service-payDate': "Pay Entry Base Date (PEBD).",
-            'service-dor': "Current Date of Rank.",
-            'service-epbDate': "Latest EPB Closeout Date.",
-            'clearance-input': "Security Adjudication Date.",
-            'rev-comments': "Board findings, waiver notes, etc.",
-            'board-comp-box': "Min 3 members required for all boards."
+            'prof-name': "MIL-STANDARD: Member's name in 'LAST, FIRST MI' format as it appears in MILPDS.",
+            'prof-rank': "RANK SELECTION: Target grade. Promotion eligibility depends on awarded AFSC skill level and position availability.",
+            'prof-package': "LOGIC TYPE: Standard (Vacancy promotion), STEP I (Accelerated E6/E7), STEP II (Accelerated E8/E9), or Retraining (qualified AFSC but new duty).",
+            'readiness-submissionDate': "HQ COMPLIANCE: AFI 36-2905. Member fitness must remain current through the last day of the month following the month this package is submitted.",
+            'service-payDate': "PEBD (AFI 36-2502): Basis for Time in Service (TIS). Member must meet minimum TIS thresholds for the target grade.",
+            'service-dor': "TIG (AFI 36-2502): Basis for Time in Grade. Member must meet 24-month TIG for MSgt through CMSgt promotions.",
+            'service-epbDate': "PERFORMANCE (DAFI 36-2406): AGRs must have a closeout within 12 months; DSGs within 24 months of the submission window.",
+            'clearance-input': "SECURITY (DAFI 31-501): Valid clearance must be adjudicated within 5 years. If aged over 5 years, a validity memo is mandatory.",
+            'board-comp-box': "BOARD COMPOSITION (AFI 36-2502): MSgt: Min 2 MSgts + 1 SMSgt. SMSgt/CMSgt: Min 3 CMSgts (incl. Wing CCM). STEP boards require CCM level oversight.",
+            'tis-label': "TIS ELIGIBILITY: MSgt: 8 yrs; SMSgt: 11 yrs; CMSgt: 14 yrs of Satisfactory Service (DSG) or TAFMS (AGR).",
+            'tig-label': "TIG ELIGIBILITY: AFI 36-2502 requires a minimum of 24 months in current grade for promotion to E-7, E-8, and E-9.",
+            'epb-label': "EVALUATION CYCLE: Packages require the most current performance report. Out-of-cycle evaluations block processing until corrected.",
+            'security-label': "VALIDITY: Clearances aged over 5 years (60 months) from adjudication date require a standard Security Validity Memo for HQ acceptance.",
+            'fit-exp-label': "FITNESS EXPIRATION: AFI 36-2905 requires currency through the entirety of the processing window (Submission Month + 1).",
+            'first-sgt-btn': "SPECIAL DUTY: First Sergeants must acknowledge specialized SOUs regarding their diamond position and retraining timelines.",
+            'dafsc-label': "DUTY QUALIFICATION: Select the Member's actual awarded skill level in their current Duty AFSC. Retraining promotions require at least a 3-level in Duty AFSC."
         };
 
         const standards = {
@@ -547,7 +547,6 @@
             const reqSkill = s.skill;
             const isRetrain = (pSkill >= reqSkill && dSkill < reqSkill);
             const isStep = (sncoState.profile.packageType || "").startsWith('STEP');
-            const isStepII = sncoState.profile.packageType === 'STEP_II';
             const isE8E9 = ['SMSgt', 'CMSgt'].includes(sncoState.profile.targetRank);
             
             const w = [];
@@ -562,7 +561,7 @@
             if (tisVal < s.minTis) w.push({ f: 'Eligibility', m: `Needs ${s.tisLabel} ${isAGR ? 'TAFMS' : 'Satisfactory Service'}.`, t: 'error' });
             if (m.tig === null) w.push({ f: 'Incomplete', m: 'DOR missing.', t: 'error' });
             else if (m.tig < 24 && !sncoState.profile.targetRank.startsWith('T')) w.push({ f: 'TIG', m: 'Needs 24 Mos.', t: 'error' });
-            if (m.epbAge === null) w.push({ f: 'Incomplete', m: 'EPB Closeout Date missing.', t: 'error' });
+            if (m.epbAge === null) w.push({ f: 'Incomplete', m: 'EPB missing.', t: 'error' });
             else if (m.epbAge > (isAGR ? 12 : 24)) w.push({ f: 'EPB', m: 'Out of Cycle.', t: 'error' });
             if (sncoState.readiness.fitStatus === 'Failing') w.push({ f: 'Ineligible', m: 'Fitness Failing.', t: 'error' });
             if (sncoState.readiness.fitStatus === 'Pregnancy') w.push({ f: 'Fitness', m: 'Pregnancy exemption active.', t: 'warning' });
@@ -572,7 +571,7 @@
             if (s.pme) s.pme.forEach(pme => { if (!sncoState.service.pmeComplete[pme]) w.push({ f: 'PME', m: `Requires ${pme} completion.`, t: 'error' }); });
             if (s.degree && !sncoState.service.degreeComplete) w.push({ f: 'Education', m: 'Requires CCAF.', t: 'error' });
             if (!sncoState.board.compositionMet) w.push({ f: 'Board', m: 'Not verified.', t: 'error' });
-            const checks = [{id:'ca26',l:'CA ANG Form 26'},{id:'sou',l:'Service SOU (Att 3)'},{id:'memo',l:'Board Letter'},{id:'epb',l:'EPB'},{id:'fit',l:'Fitness Printout'},{id:'sec_clearance',l:'Sec Clearance Memo'},{id:'retrain_sou',l:'Retrain SOU',h:!isRetrain},{id:'first_sgt_sou',l:'1st Sgt SOU',h:!sncoState.isFirstSgt},{id:'af1206',l:'AF Form 1206',h:!isStep},{id:'bio',l:'Biography',h:!(isStep || isE8E9)},{id:'step2_sou',l:'STEP II SOU (Att 8)',h:!isStepII}];
+            const checks = [{id:'ca26',l:'CA ANG Form 26'},{id:'sou',l:'Service SOU (Att 3)'},{id:'memo',l:'Board Letter'},{id:'epb',l:'EPB'},{id:'fit',l:'Fitness Printout'},{id:'sec_clearance',l:'Sec Clearance Memo'},{id:'retrain_sou',l:'Retrain SOU',h:!isRetrain},{id:'first_sgt_sou',l:'1st Sgt SOU',h:!sncoState.isFirstSgt},{id:'af1206',l:'AF Form 1206',h:!isStep},{id:'bio',l:'Biography',h:!(isStep || isE8E9)},{id:'step2_sou',l:'STEP II SOU (Att 8)',h:!sncoState.profile.packageType !== 'STEP_II'}];
             checks.forEach(i => { if (!i.h && !sncoState.checklist[i.id]) w.push({ f: 'File', m: `Missing: ${i.l}.`, t: 'error' }); });
             return w;
         }
@@ -588,7 +587,6 @@
                 const dSkill = parseInt(sncoState.service.dafscLevel);
                 const isRetrain = (pSkill >= reqSkill && dSkill < reqSkill);
                 const isStep = (sncoState.profile.packageType || "").startsWith('STEP');
-                const isStepII = sncoState.profile.packageType === 'STEP_II';
 
                 document.querySelectorAll('.snco-step').forEach((step, i) => { if (step) step.classList.toggle('hidden', i + 1 !== sncoState.currentStep); });
                 
@@ -597,7 +595,7 @@
                     stepper.innerHTML = ["Identity", "Service", "Readiness", "Verification"].map((l, i) => `
                         <div class="flex flex-col items-center gap-2 flex-1 relative ${sncoState.currentStep >= i+1 ? 'text-blue-600' : 'text-slate-400'}">
                             <div class="w-10 h-10 rounded-full border-2 flex items-center justify-center font-bold transition-all ${sncoState.currentStep >= i+1 ? 'bg-blue-600 text-white border-blue-600' : 'bg-white border-slate-200'}">
-                                ${sncoState.currentStep > i+1 ? '<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3"><path d="M5 13l4 4L19 7"></path></svg>' : i+1}
+                                ${sncoState.currentStep > i+1 ? '<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"></path></svg>' : i+1}
                             </div>
                             <span class="text-[10px] font-black uppercase tracking-widest text-center">${l}</span>
                         </div>
@@ -634,7 +632,7 @@
                         sContainer.setAttribute('data-type', targetType);
                         sContainer.className = `p-6 rounded-[40px] space-y-4 shadow-xl border-4 transition-all min-h-[160px] flex flex-col justify-center ${isAGR ? 'bg-slate-900 border-blue-500 text-white' : 'bg-white border-slate-200 text-slate-900'}`;
                         sContainer.innerHTML = `
-                            <div class="flex justify-between items-center border-b border-current opacity-40 pb-2">
+                            <div class="flex justify-between items-center border-b border-current opacity-60 pb-2">
                                 <span class="text-[9px] font-black uppercase tracking-widest text-current">${titleStr}</span>
                                 <span class="font-black text-xs italic" id="service-summary-display">${summaryStr}</span>
                             </div>
@@ -692,7 +690,12 @@
                         el('audit-summary-card').className = "mt-6 p-6 rounded-3xl border-2 bg-green-50 border-green-200 text-green-900 shrink-0 shadow-lg";
                         el('audit-summary-verdict').innerText = "PASS";
                     } else {
-                        auditRes.innerHTML = w.map(item => `<div class="p-4 rounded-2xl border flex gap-3 items-start animate-in zoom-in-95 ${item.t === 'error' ? 'bg-red-50 border-red-100 text-red-700' : 'bg-orange-50 border-orange-100 text-orange-700'}"><i data-lucide="${item.t === 'error' ? 'shield-alert' : 'alert-circle'}" class="w-4 h-4 mt-0.5 shrink-0"></i><div><p class="text-[9px] font-black uppercase opacity-60 tracking-widest leading-none">${item.f}</p><p class="text-[10px] font-bold leading-tight">${item.m}</p></div></div>`).join('');
+                        auditRes.innerHTML = w.map(item => `
+                            <div class="p-4 rounded-2xl border flex gap-3 items-start animate-in zoom-in-95 ${item.t === 'error' ? 'bg-red-50 border-red-100 text-red-700' : 'bg-orange-50 border-orange-100 text-orange-700'}">
+                                <i data-lucide="${item.t === 'error' ? 'shield-alert' : 'alert-circle'}" class="w-4 h-4 mt-0.5 shrink-0"></i>
+                                <div><p class="text-[9px] font-black uppercase opacity-60 tracking-widest leading-none">${item.f}</p><p class="text-[10px] font-bold leading-tight">${item.m}</p></div>
+                            </div>
+                        `).join('');
                         el('audit-summary-card').className = `mt-6 p-6 rounded-3xl border-2 shrink-0 ${isErr ? 'bg-red-50 border-red-200 text-red-900' : (isWarn ? 'bg-orange-50 border-orange-200 text-orange-900' : 'bg-blue-50 border-blue-200 text-blue-900')}`;
                         el('audit-summary-verdict').innerText = isErr ? "FAIL" : (isWarn ? "CAUTION" : "PASS");
                     }
@@ -717,8 +720,8 @@
                 }
 
                 if (sncoState.currentStep === 4 && el('folder-checklist')) {
-                    const items = [{id:'ca26',l:'CA ANG Form 26'},{id:'sou',l:'Service SOU (Att 3)'},{id:'memo',l:'Board Letter'},{id:'epb',l:'EPB'},{id:'fit',l:'Fitness Printout'},{id:'sec_clearance',l:'Sec Clearance Memo'},{id:'retrain_sou',l:'Retrain SOU',h:!isRetrain},{id:'first_sgt_sou',l:'1st Sgt SOU',h:!sncoState.isFirstSgt},{id:'af1206',l:'AF Form 1206',h:!isStep},{id:'bio',l:'Biography',h:!(isStep || isE8E9)},{id:'step2_sou',l:'STEP II SOU (Att 8)',h:!isStepII}];
-                    el('folder-checklist').innerHTML = items.filter(i=>!i.h).map(i=>`<div onclick="sncoToggleCheck('${i.id}')" class="h-16 p-3 rounded-2xl border-2 flex items-center justify-between cursor-pointer transition-all ${sncoState.checklist[i.id]?'bg-blue-600 border-blue-600 text-white shadow-lg':'bg-white border-slate-100'}"><span class="text-[9px] font-black uppercase tracking-tight leading-tight pr-2">${i.l}</span>${sncoState.checklist[i.id]?'<svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="4"><path d="M5 13l4 4L19 7"></path></svg>':'<div class="w-4 h-4 rounded-full border-2 border-slate-200 shrink-0"></div>'}</div>`).join('');
+                    const items = [{id:'ca26',l:'CA ANG Form 26'},{id:'sou',l:'Service SOU (Att 3)'},{id:'memo',l:'Board Letter'},{id:'epb',l:'EPB'},{id:'fit',l:'Fitness Printout'},{id:'sec_clearance',l:'Sec Clearance Memo'},{id:'retrain_sou',l:'Retrain SOU',h:!isRetrain},{id:'first_sgt_sou',l:'1st Sgt SOU',h:!sncoState.isFirstSgt},{id:'af1206',l:'AF Form 1206',h:!isStep},{id:'bio',l:'Biography',h:!(isStep || isE8E9)},{id:'step2_sou',l:'STEP II SOU (Att 8)',h:sncoState.profile.packageType !== 'STEP_II'}];
+                    el('folder-checklist').innerHTML = items.filter(i=>!i.h).map(i=>`<div onclick="sncoToggleCheck('${i.id}')" class="h-16 p-3 rounded-2xl border-2 flex items-center justify-between cursor-pointer transition-all ${sncoState.checklist[i.id]?'bg-blue-600 border-blue-600 text-white shadow-lg':'bg-white border-slate-100'}"><span class="text-[9px] font-black uppercase tracking-tight leading-tight pr-2">${i.l}</span>${sncoState.checklist[i.id]?'<svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="4"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"></path></svg>':'<div class="w-4 h-4 rounded-full border-2 border-slate-200 shrink-0"></div>'}</div>`).join('');
                     if (el('board-comp-checkbox')) el('board-comp-checkbox').checked = sncoState.board.compositionMet;
                     if (el('rev-name')) el('rev-name').value = sncoState.reviewer.name;
                     if (el('rev-rank')) el('rev-rank').value = sncoState.reviewer.rank;
@@ -747,16 +750,15 @@
             const tableBody = el('prev-audit-table-body');
             const tisVal = isAGR ? m.tafms : m.sat;
             const pSkill = parseInt(sncoState.service.pafscLevel);
-            const dSkill = parseInt(sncoState.service.dafscLevel);
 
             const auditRows = [
                 { label: `Service Eligibility (${isAGR ? 'TAFMS' : 'SAT'})`, evidence: `Actual: ${formatYM(tisVal)} / Req: ${s.tisLabel}`, status: tisVal >= s.minTis },
                 { label: 'Time in Grade (TIG)', evidence: `Actual: ${m.tig !== null ? formatYM(m.tig) : 'N/A'} / Req: 2 Yrs`, status: m.tig >= 24 || sncoState.profile.targetRank.startsWith('T') },
                 { label: 'Job Qualification (PAFSC)', evidence: `Level: ${pSkill} / Required: ${s.skill}`, status: pSkill >= s.skill },
                 { label: 'Performance Cycle (EPB)', evidence: `Age: ${m.epbAge !== null ? m.epbAge + ' Mos' : 'N/A'}`, status: m.epbAge !== null && m.epbAge <= (isAGR ? 12 : 24) },
-                { label: 'Fitness Standards', evidence: `Score: ${sncoState.readiness.fitScore || '0'} / Pass: 75+`, status: sncoState.readiness.fitStatus !== 'Failing' && (sncoState.readiness.fitStatus === 'Exempt' || parseFloat(sncoState.readiness.fitScore) >= 75) },
+                { label: 'Fitness Standards', evidence: `Score: ${sncoState.readiness.fitScore || '0'}`, status: sncoState.readiness.fitStatus !== 'Failing' && (sncoState.readiness.fitStatus === 'Exempt' || parseFloat(sncoState.readiness.fitScore) >= 75) },
                 { label: 'Security Adjudication', evidence: `Age: ${m.clAge !== null ? m.clAge + ' Mos' : 'N/A'}`, status: sncoState.readiness.clearanceDate && m.clAge < 60 },
-                { label: 'Package Verification', evidence: 'Folder items audit results', status: warnings.filter(w=>w.f==='File' || w.f === 'Incomplete').length === 0 }
+                { label: 'Package Verification', evidence: 'Audit of folder checklist', status: warnings.filter(w=>w.f==='File' || w.f === 'Incomplete').length === 0 }
             ];
 
             tableBody.innerHTML = auditRows.map(row => `
