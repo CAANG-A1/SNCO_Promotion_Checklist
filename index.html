@@ -494,7 +494,7 @@
                 }
             };
             const hide = () => { popup.classList.remove('opacity-100'); popup.style.transform = 'translateY(10px)'; };
-            document.addEventListener('focusin', (e) => { if(e && e.target && e.target.classList && e.target.classList.contains('guidance-trigger')) show(e.target); });
+            document.addEventListener('focusin', (e) => { if(e.target.classList.contains('guidance-trigger')) show(e.target); });
             document.addEventListener('mouseover', (e) => {
                 const trigger = e.target.closest('.guidance-trigger');
                 if (trigger) show(trigger);
@@ -641,7 +641,7 @@
             }
 
             if (sncoState.readiness.fitStatus === 'Failing') w.push({ f: 'Ineligible', m: 'Fitness Failing.', t: 'error' });
-            if (m.fitTgt && m.fitAct && m.fitAct < m.fitTgt) w.push({ f: 'Fitness', m: 'Fails processing currency window.', t: 'error' });
+            if (m.fitTgt && m.fitAct && m.fitAct < m.fitTgt) w.push({ f: 'Fitness', m: 'Currency error.', t: 'error' });
             
             if (!sncoState.readiness.clearanceDate) {
                 w.push({ f: 'Security', m: 'Adjudication Date missing.', t: 'error' });
@@ -717,29 +717,44 @@
             if (el('readiness-submissionDate')) el('readiness-submissionDate').value = sncoState.readiness.submissionDate;
             if (el('component-toggle')) el('component-toggle').innerHTML = ['DSG', 'AGR', 'Technician', 'Statutory Tour'].map(c => `<button onclick="sncoUpdateField('profile', 'component', '${c}')" class="flex-1 py-3 text-[10px] font-black rounded-lg transition-all ${sncoState.profile.component === c ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-500 hover:bg-white/50'}">${c}</button>`).join('');
 
+            const yrsInput = el('service-yrs-input');
+            const mosInput = el('service-mos-input');
             const box = el('tafms-container');
-            if (box && el('service-yrs-input') && el('service-mos-input')) {
+            if (box && yrsInput && mosInput) {
                 if (isAGR) {
                     box.className = "p-6 rounded-[32px] space-y-4 shadow-xl bg-slate-900 border-blue-500/30 text-white transition-all";
                     el('service-type-label').innerText = "AGR ACTIVE SERVICE (TAFMS)";
                     el('service-summary-value').innerText = formatYM(m.tafms);
+                    if (document.activeElement !== yrsInput) yrsInput.value = sncoState.service.tafmsYears;
+                    if (document.activeElement !== mosInput) mosInput.value = sncoState.service.tafmsMonths;
+                    yrsInput.className = "guidance-trigger w-full rounded-xl p-3 text-xl font-black outline-none bg-slate-800 border-slate-700 text-white";
+                    mosInput.className = "guidance-trigger w-full rounded-xl p-3 text-xl font-black outline-none bg-slate-800 border-slate-700 text-white";
                 } else {
                     box.className = "p-6 rounded-[32px] space-y-4 shadow-xl bg-white border-slate-200 text-slate-900 transition-all";
                     el('service-type-label').innerText = "SATISFACTORY SERVICE (NGB 23)";
                     el('service-summary-value').innerText = formatYM(m.sat);
+                    if (document.activeElement !== yrsInput) yrsInput.value = sncoState.service.satYears;
+                    if (document.activeElement !== mosInput) mosInput.value = sncoState.service.satMonths;
+                    yrsInput.className = "guidance-trigger w-full rounded-xl p-3 text-xl font-black outline-none bg-slate-50 border-slate-200 text-slate-900 focus:bg-white focus:border-blue-500";
+                    mosInput.className = "guidance-trigger w-full rounded-xl p-3 text-xl font-black outline-none bg-slate-50 border-slate-200 text-slate-900 focus:bg-white focus:border-blue-500";
                 }
             }
 
             if (el('admin-flags')) el('admin-flags').innerHTML = ['demotion', 'retirement', 'suspended'].map(id => `<div class="flex items-center justify-between"><span class="text-xs font-bold text-slate-700 capitalize">${id.replace('suspended', 'Legal/Hold')}?</span><button onclick="sncoToggleAdminHold('${id}')" class="w-12 h-6 rounded-full relative transition-all ${sncoState.readiness.adminHolds[id] ? 'bg-red-600' : 'bg-slate-300'}"><div class="absolute top-1 w-4 h-4 bg-white rounded-full transition-all ${sncoState.readiness.adminHolds[id] ? 'left-7' : 'left-1'}"></div></button></div>`).join('');
 
-            const audit = el('audit-results');
+            const auditResults = el('audit-results');
             const w = sncoGetWarnings();
             const isErr = w.some(item => item.t === 'error');
-            if (audit) {
-                if (w.length === 0) audit.innerHTML = `<div class="flex-1 flex flex-col items-center justify-center py-10 text-center animate-in fade-in"><div class="w-16 h-16 bg-green-50 rounded-full flex items-center justify-center mb-4"><i data-lucide="check-circle-2" class="w-8 h-8 text-green-600"></i></div><p class="text-[11px] font-black text-green-900 uppercase italic tracking-widest">Compliant Record</p></div>`;
-                else audit.innerHTML = w.map(item => `<div class="p-4 rounded-2xl border flex gap-3 items-start animate-in zoom-in-95 ${item.t === 'error' ? 'bg-red-50 border-red-100 text-red-700' : 'bg-orange-50 border-orange-100 text-orange-700'}"><i data-lucide="${item.t === 'error' ? 'shield-alert' : 'alert-circle'}" class="w-5 h-5 mt-0.5 shrink-0"></i><div><p class="text-[9px] font-black uppercase opacity-60 tracking-widest leading-none">${item.f}</p><p class="text-[10px] font-bold leading-tight">${item.m}</p></div></div>`).join('');
-                el('audit-summary-card').className = `mt-6 p-6 rounded-3xl border-2 shrink-0 ${isErr ? 'bg-red-50 border-red-200 text-red-900' : 'bg-orange-50 border-orange-200 text-orange-900'}`;
-                el('audit-summary-verdict').innerText = isErr ? "FAIL" : "CAUTION";
+            if (auditResults && el('audit-summary-card') && el('audit-summary-verdict')) {
+                if (w.length === 0) {
+                    auditResults.innerHTML = `<div class="flex-1 flex flex-col items-center justify-center py-10 text-center animate-in fade-in"><div class="w-16 h-16 bg-green-50 rounded-full flex items-center justify-center mb-4 shadow-inner ring-4 ring-green-50/50"><i data-lucide="check-circle-2" class="w-8 h-8 text-green-600"></i></div><p class="text-[11px] font-black text-green-900 uppercase italic tracking-widest">Compliant Record</p></div>`;
+                    el('audit-summary-card').className = "mt-6 p-6 rounded-3xl border-2 bg-green-50 border-green-200 text-green-900 shrink-0";
+                    el('audit-summary-verdict').innerText = "PASS";
+                } else {
+                    auditResults.innerHTML = w.map(item => `<div class="p-4 rounded-2xl border flex gap-3 items-start animate-in zoom-in-95 ${item.t === 'error' ? 'bg-red-50 border-red-100 text-red-700' : 'bg-orange-50 border-orange-100 text-orange-700'}"><i data-lucide="${item.t === 'error' ? 'shield-alert' : 'alert-circle'}" class="w-5 h-5 mt-0.5 shrink-0"></i><div><p class="text-[9px] font-black uppercase opacity-60 tracking-widest leading-none">${item.f}</p><p class="text-[10px] font-bold leading-tight">${item.m}</p></div></div>`).join('');
+                    el('audit-summary-card').className = `mt-6 p-6 rounded-3xl border-2 shrink-0 ${isErr ? 'bg-red-50 border-red-200 text-red-900' : 'bg-orange-50 border-orange-200 text-orange-900'}`;
+                    el('audit-summary-verdict').innerText = isErr ? "FAIL" : "CAUTION";
+                }
             }
 
             if (el('fit-currency-target') && m.fitTgt) {
@@ -751,9 +766,11 @@
             if (clrInput && clrLabel) {
                 if (m.clAge >= 60) {
                     clrInput.className = "guidance-trigger w-full border-2 rounded-xl p-3 font-bold outline-none bg-orange-50 border-orange-400 text-orange-900 shadow-inner";
+                    clrLabel.className = "text-[10px] font-black text-orange-600 uppercase tracking-widest block mb-1";
                     clrLabel.innerText = "SECURITY OVER 5 YRS (MEMO REQ)";
                 } else {
                     clrInput.className = "guidance-trigger w-full border-2 rounded-xl p-3 font-bold outline-none bg-slate-50 border-slate-200";
+                    clrLabel.className = "text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1";
                     clrLabel.innerText = "Security Adjudication Date";
                 }
             }
@@ -773,10 +790,29 @@
             }
 
             if (sncoState.currentStep === 4 && el('folder-checklist')) {
-                const items = [{id:'ca26',l:'CA ANG Form 26'},{id:'sou',l:'Service SOU (Att 3)'},{id:'memo',l:'Board Letter'},{id:'epb',l:'EPB'},{id:'fit',l:'Fitness Printout'},{id:'sec_clearance',l:'Sec Clearance Memo'},{id:'retrain_sou',l:'Retrain SOU',h:!isRetrain},{id:'first_sgt_sou',l:'1st Sgt SOU',h:!sncoState.isFirstSgt},{id:'af1206',l:'AF Form 1206',h:!isStep},{id:'bio',l:'Biography',h:!(isStep || isE8E9)},{id:'step2_sou',l:'STEP II SOU (Att 8)',h:!isStepII}];
+                const items = [
+                    {id:'ca26',l:'CA ANG Form 26'},
+                    {id:'sou',l:'Service SOU (Att 3)'},
+                    {id:'memo',l:'Board Letter'},
+                    {id:'epb',l:'EPB'},
+                    {id:'fit',l:'Fitness Printout'},
+                    {id:'sec_clearance',l:'Sec Clearance Memo'},
+                    {id:'retrain_sou',l:'Retrain SOU',h:!isRetrain},
+                    {id:'first_sgt_sou',l:'1st Sgt SOU',h:!sncoState.isFirstSgt},
+                    {id:'af1206',l:'AF Form 1206',h:!isStep},
+                    {id:'bio',l:'Biography',h:!(isStep || isE8E9)},
+                    {id:'step2_sou',l:'STEP II SOU (Att 8)',h:!isStepII}
+                ];
                 el('folder-checklist').innerHTML = items.filter(i=>!i.h).map(i=>`<div onclick="sncoToggleCheck('${i.id}')" class="h-16 p-3 rounded-2xl border-2 flex items-center justify-between cursor-pointer transition-all ${sncoState.checklist[i.id]?'bg-blue-600 border-blue-600 text-white':'bg-white border-slate-100'}"><span class="text-[9px] font-black uppercase tracking-tight leading-tight pr-2">${i.l}</span>${sncoState.checklist[i.id]?'<i data-lucide="check-circle-2" class="w-4 h-4 text-white"></i>':'<div class="w-4 h-4 rounded-full border-2 border-slate-200"></div>'}</div>`).join('');
-                el('board-req-text').innerText = sncoState.profile.packageType.startsWith('STEP') ? s.stepComposition : s.composition;
-                el('board-comp-checkbox').checked = sncoState.board.compositionMet;
+                if (el('board-req-text')) el('board-req-text').innerText = sncoState.profile.packageType.startsWith('STEP') ? s.stepComposition : s.composition;
+                if (el('board-comp-checkbox')) el('board-comp-checkbox').checked = sncoState.board.compositionMet;
+                if (el('rev-name')) el('rev-name').value = sncoState.reviewer.name;
+                if (el('rev-rank')) el('rev-rank').value = sncoState.reviewer.rank;
+                if (el('rev-unit')) el('rev-unit').value = sncoState.reviewer.unit;
+                if (el('rev-comments')) el('rev-comments').value = sncoState.reviewer.comments;
+                
+                if (el('service-pafsc')) el('service-pafsc').value = sncoState.service.pafscLevel;
+                if (el('service-dafsc')) el('service-dafsc').value = sncoState.service.dafscLevel;
             }
             lucide.createIcons();
         }
