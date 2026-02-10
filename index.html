@@ -16,12 +16,40 @@
             position: relative;
         }
 
+        /* --- PRINT ENGINE FIXES --- */
         @media print {
             .no-print { display: none !important; }
             body { background: white !important; padding: 0 !important; color: black !important; }
-            .print-only { display: block !important; }
-            .max-w-6xl { max-width: none !important; width: 100% !important; margin: 0 !important; }
-            #print-paper { box-shadow: none !important; margin: 0 !important; width: 100% !important; height: auto !important; min-height: 10in !important; border: none !important; }
+            
+            /* Show the modal content only, and unwrap it from fixed positioning */
+            #print-modal { 
+                display: block !important; 
+                position: static !important; 
+                background: white !important;
+                visibility: visible !important;
+                z-index: auto !important;
+            }
+            
+            .modal-overlay { background: transparent !important; backdrop-filter: none !important; }
+            
+            /* Hide UI elements within the modal during print */
+            #print-modal .border-b.bg-white, 
+            #print-modal .px-6.py-2,
+            #print-modal .px-8.py-2,
+            #print-modal button { display: none !important; }
+
+            /* Optimize the paper section for the printer */
+            #print-paper { 
+                box-shadow: none !important; 
+                margin: 0 !important; 
+                width: 100% !important; 
+                height: auto !important; 
+                min-height: auto !important; 
+                border: none !important;
+                padding: 0 !important;
+            }
+            
+            .flex-1.overflow-y-auto.p-12 { padding: 0 !important; overflow: visible !important; }
         }
 
         .custom-scrollbar::-webkit-scrollbar { width: 4px; }
@@ -68,9 +96,9 @@
     </div>
 
     <!-- PRINT PREVIEW MODAL -->
-    <div id="print-modal" class="hidden fixed inset-0 z-[2000] flex items-center justify-center p-4 md:p-12 modal-overlay no-print">
+    <div id="print-modal" class="hidden fixed inset-0 z-[2000] flex items-center justify-center p-4 md:p-12 modal-overlay">
         <div class="bg-white w-full max-w-5xl h-full rounded-[40px] shadow-2xl overflow-hidden flex flex-col animate-in zoom-in-95 duration-300">
-            <div class="p-6 border-b border-slate-200 flex justify-between items-center bg-white">
+            <div class="p-6 border-b border-slate-200 flex justify-between items-center bg-white no-print">
                 <div class="flex items-center gap-3">
                     <div class="p-2 bg-blue-600 rounded-lg text-white"><i data-lucide="file-text" class="w-5 h-5"></i></div>
                     <h2 class="font-black uppercase italic tracking-tighter">Document Preview</h2>
@@ -101,6 +129,7 @@
                         </div>
                     </div>
 
+                    <!-- COMPLIANCE AUDIT TABLE -->
                     <div class="space-y-4">
                         <div class="flex items-center gap-3">
                             <div class="w-1.5 h-6 bg-blue-600"></div>
@@ -120,6 +149,7 @@
                         </div>
                     </div>
 
+                    <!-- REVIEWER REMARKS -->
                     <div class="space-y-4">
                         <div class="flex items-center gap-3">
                             <div class="w-1.5 h-6 bg-blue-600"></div>
@@ -130,7 +160,7 @@
                         </div>
                     </div>
 
-                    <!-- SIGNATURE BLOCK - SINGLE ROW -->
+                    <!-- SIGNATURE BLOCK - GRID LAYOUT (ONE LINE) -->
                     <div class="pt-10 grid grid-cols-2 gap-12 border-t border-slate-100">
                         <div class="border-b-2 border-slate-900 pb-2">
                             <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest">Reviewer Name/Rank</p>
@@ -146,8 +176,9 @@
         </div>
     </div>
 
-    <div class="max-w-6xl mx-auto space-y-6">
-        <header class="bg-white rounded-[32px] shadow-sm border border-slate-200 p-6 flex justify-between items-center no-print">
+    <!-- MAIN APP CONTAINER -->
+    <div class="max-w-6xl mx-auto space-y-6 no-print">
+        <header class="bg-white rounded-[32px] shadow-sm border border-slate-200 p-6 flex justify-between items-center">
             <div class="flex items-center gap-4">
                 <div class="w-14 h-14 bg-slate-900 rounded-2xl flex items-center justify-center text-white">
                     <i data-lucide="shield-check" class="w-8 h-8"></i>
@@ -167,13 +198,12 @@
             </div>
         </header>
 
-        <div class="bg-white rounded-[32px] shadow-sm border border-slate-200 p-8 no-print">
+        <div class="bg-white rounded-[32px] shadow-sm border border-slate-200 p-8">
             <div id="stepper-container" class="flex justify-between items-start max-w-3xl mx-auto"></div>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch no-print">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
             
-            <!-- MAIN FORM AREA -->
             <div class="lg:col-span-8 bg-white rounded-[40px] shadow-sm border border-slate-200 flex flex-col max-h-[850px] overflow-hidden relative">
                 <div class="flex-1 p-6 md:p-10 overflow-y-auto custom-scrollbar">
                     
@@ -192,7 +222,7 @@
                                 <input type="text" id="prof-unit" oninput="sncoUpdateField('profile', 'unit', this.value)" class="guidance-trigger w-full bg-slate-50 border border-slate-200 rounded-2xl p-4 font-bold uppercase outline-none focus:ring-2 focus:ring-blue-500" placeholder="144 FW / FSS">
                             </div>
                             <div class="space-y-2">
-                                <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Target Rank (Promotion Grade)</label>
+                                <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Target Rank</label>
                                 <select id="prof-rank" onchange="sncoUpdateField('profile', 'targetRank', this.value)" class="guidance-trigger w-full bg-slate-50 border border-slate-200 rounded-2xl p-4 font-bold outline-none">
                                     <option value="TSgt">TSgt (E-6)</option>
                                     <option value="MSgt" selected>MSgt (E-7)</option>
@@ -381,7 +411,7 @@
                                     </div>
                                     <div>
                                         <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-1">Reviewer Remarks</label>
-                                        <textarea id="rev-comments" oninput="sncoUpdateField('reviewer', 'comments', this.value)" class="guidance-trigger w-full bg-white border border-slate-200 rounded-xl p-3 text-[10px] font-medium min-h-[105px] outline-none" placeholder="Enter notes..."></textarea>
+                                        <textarea id="rev-comments" oninput="sncoUpdateField('reviewer', 'comments', this.value)" class="guidance-trigger w-full bg-white border border-slate-200 rounded-xl p-3 text-[10px] font-medium min-h-[105px] outline-none" placeholder="Enter board findings or waiver notes..."></textarea>
                                     </div>
                                 </div>
                             </div>
@@ -652,7 +682,7 @@
                 {id:'epb',l:'EPB'},{id:'fit',l:'Fitness Printout'},{id:'sec_clearance',l:'Security Memo'},
                 {id:'retrain_sou',l:'Retrain SOU',h:!isRetrain},{id:'first_sgt_sou',l:'1st Sgt SOU',h:!sncoState.isFirstSgt},
                 {id:'af1206',l:'AF 1206',h:!isStep},
-                {id:'bio',l:'Biography',h:!(isStep || isE8E9)}
+                {id:'bio',l:'Military Biography',h:!(isStep || isE8E9)}
             ];
             checks.forEach(i => { if (!i.h && !sncoState.checklist[i.id]) w.push({ f: 'File', m: `Missing: ${i.l}.`, t: 'error' }); });
             return w;
